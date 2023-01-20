@@ -1,6 +1,6 @@
 package com.example.travel.ext;
 
-import com.example.travel.dto.UserDto;
+import com.example.travel.dto.MemberLoginRequest;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             //token 값에서 유효값 (id, role)을 추출하여 userDTO를 만듦
-            UserDto user = jwtTokenProvider.getUserDtoOf(authorizationHeader);
+            MemberLoginRequest user = jwtTokenProvider.getMemberDtoOf(authorizationHeader);
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                     user,
                     "",

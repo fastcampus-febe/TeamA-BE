@@ -1,7 +1,7 @@
 package com.example.travel.ext;
 
-import com.example.travel.dto.UserDto;
-import com.example.travel.entity.User;
+import com.example.travel.dto.MemberLoginRequest;
+import com.example.travel.entity.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
@@ -22,7 +22,7 @@ public class JwtTokenProvider {// 토큰 생성, 검증 하는 객체
     private final JwtProperties jwtProperties;
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public String makeJwtToken(User user) {//토큰 생성
+    public String makeJwtToken(Member member) {//토큰 생성
         Date now = new Date();
 
         return Jwts.builder()
@@ -30,13 +30,14 @@ public class JwtTokenProvider {// 토큰 생성, 검증 하는 객체
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + Duration.ofMinutes(30).toMillis()))
-                .claim("id", user.getId())
-                .claim("role", user.getRole())
+                .claim("id", member.getId())
+                .claim("nickname", member.getNickname())
+                .claim("role", member.getRole())
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
     }
 
-    public UserDto getUserDtoOf(String authorizationHeader) {
+    public MemberLoginRequest getMemberDtoOf(String authorizationHeader) {
         validationAuthorizationHeader(authorizationHeader); //토큰이 Bearer로 시작하는지 형식이 맞는지 확인
         String token ="";
         Claims claims=null;
@@ -44,7 +45,7 @@ public class JwtTokenProvider {// 토큰 생성, 검증 하는 객체
         try {
             token = extractToken(authorizationHeader); // header에서 토큰 추출 (Bearer뗌)
             claims = parsingToken(token);//
-            return new UserDto(claims);
+            return new MemberLoginRequest(claims);
         }catch (Exception e){
             logger.error("토큰이 없습니다.(2)");
         }
