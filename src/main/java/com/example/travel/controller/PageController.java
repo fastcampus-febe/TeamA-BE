@@ -20,4 +20,8 @@ public class PageController {
         return "signUp page";
     }
 
+    @GetMapping("/board")
+    public String board() {
+        return "board";
+    }
 }
