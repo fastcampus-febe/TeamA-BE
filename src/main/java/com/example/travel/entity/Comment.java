@@ -23,8 +23,8 @@ public class Comment {
     @Column(name = "writer", nullable = false, unique = true)
     private String writer;
 
-    @Column(name = "createDate", nullable = false)
-    private LocalDateTime createDate;
+    @Column(name = "createdDate", nullable = false)
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(name = "modifiedDate", nullable = false)
     private LocalDateTime modifiedDate;
