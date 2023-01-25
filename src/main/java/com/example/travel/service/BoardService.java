@@ -47,4 +47,14 @@ public class BoardService {
         entity.update(params.getTitle(), params.getContent(), params.getWriter());
         return id;
     }
+
+    /**
+     * 상세게시글 내용 가져오기
+     */
+    public BoardResponseDto findByBoardId(final Long id){
+        Board result = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        if(result != null) return new BoardResponseDto(result);
+
+        return null;
+    }
 }
