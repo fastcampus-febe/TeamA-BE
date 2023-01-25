@@ -38,7 +38,7 @@ public class Board {
     @Column(name = "createdDate", nullable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    @Column(name = "modifiedDate", nullable = false)
+    @Column(name = "modifiedDate")
     private LocalDateTime modifiedDate;
 
     @ManyToOne
@@ -56,10 +56,15 @@ public class Board {
         this.hit = hit;
     }
 
-    public void update(String title, String content, String writer) {
-        this.title = title;
-        this.content = content;
-        this.writer = writer;
-        this.modifiedDate = LocalDateTime.now();
-    }
+//    public void update(String title, String content, String writer) {
+//        this.title = title;
+//        this.content = content;
+//        this.writer = writer;
+//        this.modifiedDate = LocalDateTime.now();
+//    }
+public void update(String title, String content) {
+    this.title = title;
+    this.content = content;
+    this.modifiedDate = LocalDateTime.now();
+}
 }
