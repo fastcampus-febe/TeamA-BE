@@ -35,8 +35,8 @@ public class Board {
     @Column(name = "hit")
     private int hit;
 
-    @Column(name = "createDate", nullable = false)
-    private LocalDateTime createDate;
+    @Column(name = "createdDate", nullable = false)
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(name = "modifiedDate", nullable = false)
     private LocalDateTime modifiedDate;
@@ -54,5 +54,12 @@ public class Board {
         this.good = good;
         this.bad = bad;
         this.hit = hit;
+    }
+
+    public void update(String title, String content, String writer) {
+        this.title = title;
+        this.content = content;
+        this.writer = writer;
+        this.modifiedDate = LocalDateTime.now();
     }
 }
