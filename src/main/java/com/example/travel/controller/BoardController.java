@@ -59,10 +59,6 @@ public class BoardController {
          boardService.deleteById(id);
     }
 
-    /**
-     * 게시글 조회수
-     */
-    @GetMapping("/board/hit")
-    public int countBoardHit()
+
 }
 

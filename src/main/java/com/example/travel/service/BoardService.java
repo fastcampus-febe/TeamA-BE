@@ -62,11 +62,8 @@ public class BoardService {
      * 게시글 삭제하기
      */
     @Transactional
-    public void deleteById(final Long id){
+    public void deleteById(final Long id) {
         boardRepository.deleteById(id);
     }
-    /**
-     * 게시글 조회수 가져오기
-     */
 
 }
