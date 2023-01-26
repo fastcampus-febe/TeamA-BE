@@ -15,6 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.travel.entity.Board;
 import com.example.travel.repository.BoardRepository;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @SpringBootTest
 public class BoardControllerTest {
@@ -69,5 +72,10 @@ public class BoardControllerTest {
     void findByBoardId(){
         BoardResponseDto result = new BoardResponseDto(boardRepository.findById((long)1).get());
         System.out.println(result);
+    }
+
+    @Test
+    void deleteById(){
+        boardRepository.deleteById((long) 2);
     }
 }
