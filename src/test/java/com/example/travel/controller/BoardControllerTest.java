@@ -3,12 +3,8 @@ package com.example.travel.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.example.travel.dto.BoardResponseDto;
-import com.example.travel.entity.Member;
-import com.example.travel.repository.MemberRepository;
-import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,5 +70,10 @@ public class BoardControllerTest {
     @Test
     void deleteById(){
         boardRepository.deleteById((long) 1);
+    }
+
+    @Test
+    void updateHit() {
+      boardRepository.updateHit((long) 1);
     }
 }

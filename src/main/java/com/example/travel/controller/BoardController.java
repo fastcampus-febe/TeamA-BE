@@ -46,7 +46,7 @@ public class BoardController {
      */
     @GetMapping("/board/{id}")
     @ApiOperation(value = "게시글 조회", notes = "상세 게시글 내용을 가져옵니다.")
-    public BoardResponseDto findByBoardId(@PathVariable final Long id){
+    public BoardResponseDto findByBoardId(@PathVariable final Long id) {
         return boardService.findByBoardId(id);
     }
 
@@ -55,7 +55,16 @@ public class BoardController {
      */
     @ApiOperation(value = "게시글 삭제", notes = "게시글을 삭제합니다.")
     @DeleteMapping("/board/{id}")
-    public void deleteBoardById(@PathVariable final Long id){
+    public void deleteBoardById(@PathVariable final Long id) {
         boardService.deleteById(id);
+    }
+
+    /**
+     * 조회수 증가
+     */
+    @ApiOperation(value = "조회수 증가", notes = "조회수를 증가합니다.")
+    @GetMapping("/board/hit/{id}")
+    public int updateHit(@PathVariable("id") final Long id) {
+        return boardService.updateHit(id);
     }
 }

@@ -51,9 +51,9 @@ public class BoardService {
     /**
      * 상세게시글 내용 가져오기
      */
-    public BoardResponseDto findByBoardId(final Long id){
+    public BoardResponseDto findByBoardId(final Long id) {
         Board result = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
-        if(result != null) return new BoardResponseDto(result);
+        if (result != null) return new BoardResponseDto(result);
 
         return null;
     }
@@ -62,7 +62,16 @@ public class BoardService {
      * 게시글 삭제하기
      */
     @Transactional
-    public void deleteById(final Long id){
+    public void deleteById(final Long id) {
         boardRepository.deleteById(id);
+    }
+
+    /**
+     * 조회수 증가하기
+     */
+    @Transactional
+    public int updateHit(Long id) {
+        Board board = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        return boardRepository.updateHit(board.getId());
     }
 }
