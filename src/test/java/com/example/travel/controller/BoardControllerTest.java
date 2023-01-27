@@ -70,4 +70,9 @@ public class BoardControllerTest {
         BoardResponseDto result = new BoardResponseDto(boardRepository.findById((long)1).get());
         System.out.println(result);
     }
+
+    @Test
+    void deleteById(){
+        boardRepository.deleteById((long) 1);
+    }
 }
