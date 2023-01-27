@@ -76,18 +76,4 @@ public class Board {
     public void increaseHit() {
         this.hit++;
     }
-
-    /**
-     * 좋아요 수 증가
-     */
-    public void increaseThumb() {
-        this.thumb += 1;
-    }
-
-    /**
-     * 좋아요 수 차감
-     */
-    public void decreaseThumb() {
-        this.thumb -= 1;
-    }
 }
