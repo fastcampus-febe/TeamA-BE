@@ -49,4 +49,13 @@ public class BoardController {
     public BoardResponseDto findByBoardId(@PathVariable final Long id){
         return boardService.findByBoardId(id);
     }
+
+    /**
+     * 게시글 삭제
+     */
+    @ApiOperation(value = "게시글 삭제", notes = "게시글을 삭제합니다.")
+    @DeleteMapping("/board/{id}")
+    public void deleteBoardById(@PathVariable final Long id){
+        boardService.deleteById(id);
+    }
 }
