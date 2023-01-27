@@ -11,6 +11,9 @@ import com.example.travel.repository.BoardRepository;
 import com.example.travel.repository.MemberRepository;
 import com.example.travel.repository.ThumbRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -80,10 +83,9 @@ public class BoardService {
      * 좋아요
      */
     @Transactional
-    public String thumbsUp(Long id) {
+    public String thumbsUp(Long id, String memberId) {
         Board board = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = memberRepository.findById(authentication.getName()).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
         if (thumbRepository.findByBoardAndMember(board, member) == null) {
             // 좋아요를 누른적 없다면 LikeBoard 생성 후, 좋아요 처리
             board.setThumb(board.getThumb() + 1);
@@ -98,33 +100,27 @@ public class BoardService {
             return "좋아요 취소";
         }
     }
-//
-//    @Transactional
-//    public String updateThumbsUp(Long id, Member member) {
-//        Board board = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
-//        if (!hasThumb(board, member)) {
-//            board.increaseThumb();
-//            return createThumb(board,member);
-//        }
-//        board.decreaseThumb();
-//        return removeThumb(board, member);
-//    }
-//
-//    public boolean hasThumb(Board board, Member member) {
-//        return thumbRepository.findByBoardAndMember(board, member).isPresent();
-//    }
-//
-//    public String createThumb(Board board, Member member) {
-//        Thumb thumb = new Thumb(board, member); // true 처리
-//        thumbRepository.save(thumb);
-//        return SUCCESS_THUMBSUP_BOARD;
-//    }
-//
-//    public String removeThumb(Board board, Member member) {
-//        Thumb thumb = thumbRepository.findByBoardAndMember(board, member).orElseThrow(() -> {
-//            throw new IllegalArgumentException("'좋아요' 기록을 찾을 수 없습니다.");
-//        });
-//        thumbRepository.delete(thumb);
-//        return SUCCESS_THUMBSDOWN_BOARD;
-//    }
+
+    /**
+     * 게시글 최신 순으로 가져오기
+     * ?order = -createdDate : 내림차순 desc created_date
+     */
+    public List<BoardResponseDto> findByCreatedDateDesc(int page){
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate").descending());
+        Page<Board> result = boardRepository.findAll(pageable);
+        List<Board> boardList = result.getContent();
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    }
+
+
+    /**
+     * 게시글 오래된 순으로 가져오기
+     * ?order = createdDate : 오름차순 asc create_date
+     */
+    public List<BoardResponseDto> findByCreatedDateAsc(int page){
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate").ascending());
+        Page<Board> result = boardRepository.findAll(pageable);
+        List<Board> boardList = result.getContent();
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    }
 }
