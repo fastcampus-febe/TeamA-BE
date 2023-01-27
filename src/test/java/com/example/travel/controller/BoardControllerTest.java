@@ -30,8 +30,6 @@ public class BoardControllerTest {
                 .title("1번 게시글 제목")
                 .content("1번 게시글 내용")
                 .writer("bourbon")
-                .good(3)
-                .bad(1)
                 .hit(0)
                 .build();
 

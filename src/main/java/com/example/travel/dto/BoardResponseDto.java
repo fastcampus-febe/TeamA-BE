@@ -12,8 +12,7 @@ public class BoardResponseDto {
     private String title; // 제목
     private String content; // 내용
     private String writer; // 작성자
-    private int good; // 좋아요
-    private int bad; // 싫어요
+    private int thumb; // 좋아요
     private int hit; // 조회 수
     private LocalDateTime createdDate; // 생성일
     private LocalDateTime modifiedDate; // 수정일
@@ -23,8 +22,7 @@ public class BoardResponseDto {
         this.title = board.getTitle();
         this.content = board.getContent();
         this.writer = board.getWriter();
-        this.good = board.getGood();
-        this.bad = board.getBad();
+        this.thumb = board.getThumb();
         this.hit = board.getHit();
         this.createdDate = board.getCreatedDate();
         this.modifiedDate = board.getModifiedDate();
