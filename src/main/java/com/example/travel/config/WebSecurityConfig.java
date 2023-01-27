@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private static final String[] PUBLIC_URLS = { //이 URL은 권한 검사안함. 아래 내용은 임시임.
-            "/signup", "/login", "/", "/board/**"
+            "/signup", "/login", "/"
     };
 
     private final JwtTokenProvider jwtTokenProvider;
