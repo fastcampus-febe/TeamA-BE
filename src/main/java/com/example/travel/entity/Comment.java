@@ -1,15 +1,17 @@
 package com.example.travel.entity;
 
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 @Entity
 @Table(name = "comment")
-@ToString
 public class Comment {
 
     @Id
@@ -20,8 +22,15 @@ public class Comment {
     @Column(name = "content", nullable = false, length = 1000)
     private String content;
 
-    @Column(name = "writer", nullable = false, unique = true)
-    private String writer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Board board;
 
     @Column(name = "createdDate", nullable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
@@ -29,18 +38,10 @@ public class Comment {
     @Column(name = "modifiedDate", nullable = false)
     private LocalDateTime modifiedDate;
 
-    @ManyToOne
-    @JoinColumn(name = "board_id")
-    private Board board;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
-
     @Builder
-    public Comment(Long id, String content, String writer) {
-        this.id = id;
+    public Comment(String content, Member member, Board board) {
         this.content = content;
-        this.writer = writer;
+        this.member = member;
+        this.board = board;
     }
 }
