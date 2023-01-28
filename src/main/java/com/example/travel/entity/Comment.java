@@ -44,4 +44,12 @@ public class Comment {
         this.member = member;
         this.board = board;
     }
+
+    /**
+     * 댓글 수정
+     */
+    public void update(String content) {
+        this.content = content;
+        this.modifiedDate = LocalDateTime.now();
+    }
 }

@@ -4,6 +4,8 @@ import com.example.travel.entity.Board;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class BoardResponseDto {
@@ -16,6 +18,8 @@ public class BoardResponseDto {
     private int hit; // 조회 수
     private LocalDateTime createdDate; // 생성일
     private LocalDateTime modifiedDate; // 수정일
+    private String user_id; // 작성자 id
+    private List<CommentResponseDto> comments;
 
     public BoardResponseDto(Board board) {
         this.id = board.getId();
@@ -26,5 +30,7 @@ public class BoardResponseDto {
         this.hit = board.getHit();
         this.createdDate = board.getCreatedDate();
         this.modifiedDate = board.getModifiedDate();
+        this.user_id = board.getMember().getId();
+        this.comments = board.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList());
     }
 }
