@@ -8,10 +8,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
 @Entity
 @Table(name = "comment")
+@ToString
 public class Comment {
 
     @Id
@@ -19,31 +19,41 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content", nullable = false, length = 1000)
+    @Column(name = "content", length = 1000)
     private String content;
 
+    @Column(name = "writer")
+    private String writer;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "board_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Board board;
 
-    @Column(name = "createdDate", nullable = false)
+    @Column(name = "createdDate")
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    @Column(name = "modifiedDate", nullable = false)
+    @Column(name = "modifiedDate")
     private LocalDateTime modifiedDate;
 
     @Builder
-    public Comment(String content, Member member, Board board) {
+    public Comment(Long id, String content, String writer, Member member, Board board) {
+        this.id = id;
         this.content = content;
+        this.writer = writer;
         this.member = member;
         this.board = board;
     }
+//    @Builder
+//    public Comment(Member member, Board board) {
+//        this.member = member;
+//        this.board = board;
+//    }
 
     /**
      * 댓글 수정

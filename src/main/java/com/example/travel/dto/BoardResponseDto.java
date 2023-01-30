@@ -18,19 +18,19 @@ public class BoardResponseDto {
     private int hit; // 조회 수
     private LocalDateTime createdDate; // 생성일
     private LocalDateTime modifiedDate; // 수정일
-    private String user_id; // 작성자 id
-    private List<CommentResponseDto> comments;
+//    private String member_id; // 작성자 id
+//    private List<CommentResponseDto> comments;
 
     public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
-        this.writer = board.getWriter();
+        this.writer = board.getMember().getNickname();
         this.thumb = board.getThumb();
         this.hit = board.getHit();
         this.createdDate = board.getCreatedDate();
         this.modifiedDate = board.getModifiedDate();
-        this.user_id = board.getMember().getId();
-        this.comments = board.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList());
+//        this.member_id = board.getMember().getId();
+//        this.comments = board.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList());
     }
 }
