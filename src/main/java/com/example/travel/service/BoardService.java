@@ -37,6 +37,7 @@ public class BoardService {
     @Transactional
     public Long save(String nickname, final BoardRequestDto dto) {
         Member member = memberRepository.findByNickname(nickname);
+        dto.setWriter(member.getNickname());
         dto.setMember(member);
 
         Board board = boardRepository.save(dto.toEntity());
