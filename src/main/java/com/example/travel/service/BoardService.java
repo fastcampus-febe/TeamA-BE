@@ -137,6 +137,7 @@ public class BoardService {
         return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
     }
 
+    /**
      * 게시글 검색
      */
 
