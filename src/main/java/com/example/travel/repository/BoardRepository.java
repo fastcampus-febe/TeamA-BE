@@ -13,5 +13,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Page<Board> findAllByTitleContaining(String searchKeyword, Pageable pageable);
-    Page<Board> findAllByWriter(String writer, Pageable pageable);
+    Page<Board> findAllByWriterContaining(String writer, Pageable pageable);
 }

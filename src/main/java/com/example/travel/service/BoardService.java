@@ -156,7 +156,7 @@ public class BoardService {
     }
 
     public List<BoardResponseDto> boardSearchByWriter(String writer, Pageable pageable){
-        Page<Board> result = boardRepository.findAllByWriter(writer, pageable);
+        Page<Board> result = boardRepository.findAllByWriterContaining(writer, pageable);
         List<Board> boardList = result.getContent();
         List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
         return boardResponseDtoList;
