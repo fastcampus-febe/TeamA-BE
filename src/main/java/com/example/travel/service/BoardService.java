@@ -74,7 +74,7 @@ public class BoardService {
      * 게시글 삭제하기
      */
     @Transactional
-    public void deleteById(final Long id){
+    public void deleteById(final Long id) {
         boardRepository.deleteById(id);
     }
 
@@ -100,11 +100,12 @@ public class BoardService {
         }
     }
 
+
     /**
      * 게시글 최신 순으로 가져오기
      * ?order = -createdDate : 내림차순 desc created_date
      */
-    public List<BoardResponseDto> findByCreatedDateDesc(int page){
+    public List<BoardResponseDto> findByCreatedDateDesc(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate").descending());
         Page<Board> result = boardRepository.findAll(pageable);
         List<Board> boardList = result.getContent();
@@ -116,10 +117,35 @@ public class BoardService {
      * 게시글 오래된 순으로 가져오기
      * ?order = createdDate : 오름차순 asc create_date
      */
-    public List<BoardResponseDto> findByCreatedDateAsc(int page){
+    public List<BoardResponseDto> findByCreatedDateAsc(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate").ascending());
         Page<Board> result = boardRepository.findAll(pageable);
         List<Board> boardList = result.getContent();
         return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    }
+
+    /**
+     * 게시글 검색
+     */
+
+    public List<BoardResponseDto> boardSearchByKey(String searchKeyword, Pageable pageable) {
+        Page<Board> result = boardRepository.findAllByTitleContaining(searchKeyword, pageable);
+        List<Board> boardList = result.getContent();
+        List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardResponseDtoList;
+    }
+
+    public List<BoardResponseDto> boardList(Pageable pageable) {
+        Page<Board> result = boardRepository.findAll(pageable);
+        List<Board> boardList = result.getContent();
+        List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardResponseDtoList;
+    }
+
+    public List<BoardResponseDto> boardSearchByWriter(String writer, Pageable pageable){
+        Page<Board> result = boardRepository.findAllByWriter(writer, pageable);
+        List<Board> boardList = result.getContent();
+        List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardResponseDtoList;
     }
 }
