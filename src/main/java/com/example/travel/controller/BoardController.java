@@ -3,6 +3,7 @@ package com.example.travel.controller;
 import com.example.travel.dto.BoardRequestDto;
 import com.example.travel.dto.BoardResponseDto;
 import com.example.travel.dto.MemberLoginRequest;
+import com.example.travel.entity.Board;
 import com.example.travel.entity.Member;
 import com.example.travel.repository.BoardRepository;
 import com.example.travel.repository.MemberRepository;
@@ -10,8 +11,13 @@ import com.example.travel.service.BoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,16 +28,16 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final MemberRepository memberRepository;
+    private final BoardRepository boardRepository;
 
     /**
      * 게시글 생성
      */
     @PostMapping("/board/insert")
     @ApiOperation(value = "게시글 생성", notes = "새 게시글을 생성합니다.")
-    public Long save(@RequestBody final BoardRequestDto params, Authentication authentication) {
-        MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
-        String strMemberNickname = memberLoginRequest.getNickname();
-        return boardService.save(strMemberNickname, params);
+    public Long save(@RequestBody final BoardRequestDto params) {
+        return boardService.save(params);
     }
 
     /**
@@ -96,5 +102,20 @@ public class BoardController {
             return boardService.findByCreatedDateDesc(page-1);
         }
         return boardService.findByCreatedDateAsc(page-1);
+    }
+
+    @ApiOperation(value = "게시글 검색", notes = "닉네임 또는 제목으로 게시물을 검색합니다.")
+    @GetMapping("/board/list")
+    public List<BoardResponseDto> boardList(Model model,
+                            @PageableDefault(page=0, size=10, sort="id", direction= Sort.Direction.DESC) Pageable pageable,
+                            @RequestParam(required = false, value="searchKeyword") String searchKeyword, @RequestParam(required = false, value="writer") String writer){
+
+        if (searchKeyword ==null && writer == null){
+            return boardService.boardList(pageable);
+        } else if (searchKeyword != null && writer == null) {
+            return boardService.boardSearchByKey(searchKeyword, pageable);
+        } else {
+            return boardService.boardSearchByWriter(writer, pageable);
+        }
     }
 }
