@@ -127,6 +127,16 @@ public class BoardService {
     }
 
     /**
+     * 게시글 좋아요 순으로 가져오기
+     * ?order = thumb : 내림차순 desc thumb
+     */
+    public List<BoardResponseDto> findByThumbsUp(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("thumb").descending());
+        Page<Board> result = boardRepository.findAll(pageable);
+        List<Board> boardList = result.getContent();
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    }
+
      * 게시글 검색
      */
 

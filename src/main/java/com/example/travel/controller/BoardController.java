@@ -65,7 +65,7 @@ public class BoardController {
      */
     @GetMapping("/board/{id}")
     @ApiOperation(value = "게시글 조회", notes = "상세 게시글 내용을 가져옵니다.")
-    public BoardResponseDto findByBoardId(@PathVariable final Long id){
+    public BoardResponseDto findByBoardId(@PathVariable final Long id) {
         return boardService.findByBoardId(id);
     }
 
@@ -74,7 +74,7 @@ public class BoardController {
      */
     @ApiOperation(value = "게시글 삭제", notes = "게시글을 삭제합니다.")
     @DeleteMapping("/board/{id}")
-    public void deleteBoardById(@PathVariable final Long id){
+    public void deleteBoardById(@PathVariable final Long id) {
         boardService.deleteById(id);
     }
 
@@ -92,18 +92,28 @@ public class BoardController {
     /**
      * 게시글 최신 순으로 가져오기
      * ?order = -createdDate : 내림차순 desc created_date
-     *
+     * <p>
      * 게시글 오래된 순으로 가져오기
      * ?order = createdDate : 오름차순 asc create_date
      */
     @GetMapping("/boards")
     @ApiOperation(value = "게시글 정렬", notes = "default 는 최신 순으로 게시글을 가져옵니다. order = createdDate 인 경우 오래된 순으로 가져옵니다.")
-    public List<BoardResponseDto> findByCreatedDateAsc(@RequestParam (required = false, defaultValue = "-createdDate") @Nullable String order,
-                                                       @RequestParam(required = false, defaultValue = "1") int page){
-        if(order.equals("-createdDate") || order.equals("")){
-            return boardService.findByCreatedDateDesc(page-1);
+    public List<BoardResponseDto> findByCreatedDate(@RequestParam(required = false, defaultValue = "-createdDate") @Nullable String order,
+                                                    @RequestParam(required = false, defaultValue = "1") int page) {
+        if (order.equals("-createdDate") || order.equals("")) {
+            return boardService.findByCreatedDateDesc(page - 1);
         }
-        return boardService.findByCreatedDateAsc(page-1);
+        return boardService.findByCreatedDateAsc(page - 1);
+    }
+
+    /**
+     * 게시글 좋아요 순으로 가져오기
+     * ?order = thumb : 내림차순 desc thumb
+     */
+    @GetMapping("/boards/thumb")
+    @ApiOperation(value = "게시글 정렬(좋아요 순)", notes = "모든 게시글을 좋아요 순으로 가져오는 api")
+    public List<BoardResponseDto> findByThumbsUp(@RequestParam(required = false, defaultValue = "1") int page) {
+        return boardService.findByThumbsUp(page - 1);
     }
 
     @ApiOperation(value = "게시글 검색", notes = "닉네임 또는 제목으로 게시물을 검색합니다.")
