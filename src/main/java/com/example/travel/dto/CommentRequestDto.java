@@ -1,32 +1,35 @@
 package com.example.travel.dto;
 
 import com.example.travel.entity.Board;
+import com.example.travel.entity.Comment;
 import com.example.travel.entity.Member;
 import lombok.*;
 
-//@Getter
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BoardRequestDto {
+public class CommentRequestDto {
 
     private Long id;
-    private String title; // 제목
-    private String content; // 내용
+    private String content; // 댓글 내용
     private String writer; // 작성자
     private Member member;
+    private Board board;
 
-    public Board toEntity() {
-        return Board.builder()
+    public Comment toEntity() {
+        return Comment.builder()
                 .id(id)
-                .title(title)
                 .content(content)
                 .writer(writer)
-                .thumb(0)
-                .hit(0)
                 .member(member)
+                .board(board)
                 .build();
     }
+//    public Comment toEntity() {
+//        return Comment.builder()
+//                .member(member)
+//                .board(board)
+//                .build();
+//    }
 }
