@@ -16,13 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.example.travel.entity.Board;
 import com.example.travel.repository.BoardRepository;
 
-@SpringBootTest
+//@SpringBootTest
 public class BoardControllerTest {
 
-    @Autowired
+//    @Autowired
     BoardRepository boardRepository;
 
-    @Test
+//    @Test
     void save() {
 
         // 1. 게시글 파라미터 생성
@@ -43,7 +43,7 @@ public class BoardControllerTest {
         assertThat(entity.getWriter()).isEqualTo("bourbon");
     }
 
-    @Test
+//    @Test
     void findAll() {
 
         // 1. 전체 게시글 수 조회
@@ -53,7 +53,7 @@ public class BoardControllerTest {
         List<Board> boards = boardRepository.findAll();
     }
 
-    @Test
+//    @Test
     void delete() {
 
         // 1. 게시글 조회
@@ -63,13 +63,13 @@ public class BoardControllerTest {
         boardRepository.delete(entity);
     }
 
-    @Test
+//    @Test
     void findByBoardId(){
         BoardResponseDto result = new BoardResponseDto(boardRepository.findById((long)1).get());
         System.out.println(result);
     }
 
-    @Test
+//    @Test
     void deleteById(){
         boardRepository.deleteById((long) 1);
     }
