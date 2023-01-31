@@ -36,7 +36,7 @@ public class CommentService {
                 new IllegalArgumentException("댓글 작성 실패 : 해당 게시글 id가 존재하지 않습니다. => " + boardId));
         Member member = memberRepository.findById(memberId).orElseThrow(() ->
                 new IllegalArgumentException("댓글 작성 실패 : 해당 Member id가 존재하지 않습니다. => " + memberId));
-
+        dto.setWriter(member.getNickname());
         dto.setBoard(board);
         dto.setMember(member);
 
