@@ -36,8 +36,10 @@ public class BoardController {
      */
     @PostMapping("/board/insert")
     @ApiOperation(value = "게시글 생성", notes = "새 게시글을 생성합니다.")
-    public Long save(@RequestBody final BoardRequestDto params) {
-        return boardService.save(params);
+    public Long save(@RequestBody final BoardRequestDto params, Authentication authentication) {
+        MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
+        String strMemberNickname = memberLoginRequest.getNickname();
+        return boardService.save(strMemberNickname, params);
     }
 
     /**

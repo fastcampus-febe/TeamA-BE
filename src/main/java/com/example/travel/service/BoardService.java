@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BoardService {
-    private final static String SUCCESS_THUMBSUP_BOARD = "좋아요 처리 완료";
-    private final static String SUCCESS_THUMBSDOWN_BOARD = "좋아요 취소 완료";
 
     private final BoardRepository boardRepository;
     private final ThumbRepository thumbRepository;
@@ -37,9 +35,12 @@ public class BoardService {
      * 게시글 생성
      */
     @Transactional
-    public Long save(final BoardRequestDto params) {
-        Board entity = boardRepository.save(params.toEntity());
-        return entity.getId();
+    public Long save(String nickname, final BoardRequestDto dto) {
+        Member member = memberRepository.findByNickname(nickname);
+        dto.setMember(member);
+
+        Board board = boardRepository.save(dto.toEntity());
+        return board.getId();
     }
 
     /**
@@ -57,7 +58,7 @@ public class BoardService {
     @Transactional
     public Long update(final Long id, final BoardRequestDto params) {
         Board entity = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
-        entity.update(params.getTitle(), params.getContent(), params.getWriter());
+            entity.update(params.getTitle(), params.getContent());
         return id;
     }
 
