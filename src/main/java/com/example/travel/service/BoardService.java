@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +58,7 @@ public class BoardService {
     @Transactional
     public Long update(final Long id, final BoardRequestDto params) {
         Board entity = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
-        entity.update(params.getTitle(), params.getContent());
+            entity.update(params.getTitle(), params.getContent());
         return id;
     }
 
@@ -100,6 +102,7 @@ public class BoardService {
         }
     }
 
+
     /**
      * 게시글 최신 순으로 가져오기
      * ?order = -createdDate : 내림차순 desc created_date
@@ -132,5 +135,29 @@ public class BoardService {
         Page<Board> result = boardRepository.findAll(pageable);
         List<Board> boardList = result.getContent();
         return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    }
+
+     * 게시글 검색
+     */
+
+    public List<BoardResponseDto> boardSearchByKey(String searchKeyword, Pageable pageable) {
+        Page<Board> result = boardRepository.findAllByTitleContaining(searchKeyword, pageable);
+        List<Board> boardList = result.getContent();
+        List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardResponseDtoList;
+    }
+
+    public List<BoardResponseDto> boardList(Pageable pageable) {
+        Page<Board> result = boardRepository.findAll(pageable);
+        List<Board> boardList = result.getContent();
+        List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardResponseDtoList;
+    }
+
+    public List<BoardResponseDto> boardSearchByWriter(String writer, Pageable pageable){
+        Page<Board> result = boardRepository.findAllByWriter(writer, pageable);
+        List<Board> boardList = result.getContent();
+        List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardResponseDtoList;
     }
 }
