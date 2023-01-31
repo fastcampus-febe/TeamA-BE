@@ -130,4 +130,19 @@ public class BoardController {
             return boardService.boardSearchByWriter(writer, pageable);
         }
     }
+
+    @ApiOperation(value = "게시글 검색", notes = "닉네임 또는 제목으로 게시물을 검색합니다.")
+    @GetMapping("/board/list")
+    public List<BoardResponseDto> boardList(Model model,
+                                            @PageableDefault(page=0, size=10, sort="id", direction= Sort.Direction.DESC) Pageable pageable,
+                                            @RequestParam(required = false, value="searchKeyword") String searchKeyword, @RequestParam(required = false, value="writer") String writer){
+
+        if (searchKeyword ==null && writer == null){
+            return boardService.boardList(pageable);
+        } else if (searchKeyword != null && writer == null) {
+            return boardService.boardSearchByKey(searchKeyword, pageable);
+        } else {
+            return boardService.boardSearchByWriter(writer, pageable);
+        }
+    }
 }

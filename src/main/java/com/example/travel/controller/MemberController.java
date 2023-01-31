@@ -30,6 +30,7 @@ public class MemberController {
         return res;
     }
 
+
 //    @GetMapping("/hello")
 //    @PreAuthorize("hasAnyRole('USER')") // USER 권한만 호출 가능
 //    public String hello(@AuthenticationPrincipal UserDto user) {

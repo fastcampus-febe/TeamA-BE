@@ -6,6 +6,7 @@ import com.example.travel.dto.TokenDto;
 import com.example.travel.entity.Member;
 import com.example.travel.ext.JwtTokenProvider;
 import com.example.travel.repository.MemberRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;

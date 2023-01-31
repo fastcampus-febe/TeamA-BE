@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private static final String[] PUBLIC_URLS = { //이 URL은 권한 검사안함. 아래 내용은 임시임.
-            "/signup", "/login", "/"
+            "/signup", "/login", "/",
     };
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -46,6 +46,13 @@ public class WebSecurityConfig {
                 .formLogin().loginPage("/login").permitAll()//로그인 기본 url 설정
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
+
+                //logout
+                .and()
+                    .logout()
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login")
+
                 .and()
                 .addFilterBefore(
                         JwtAuthenticationFilter.of(jwtTokenProvider),

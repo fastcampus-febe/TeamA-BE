@@ -52,7 +52,7 @@ public class JwtTokenProvider {// 토큰 생성, 검증 하는 객체
         return null;
     }
 
-    private Claims parsingToken(String token) { //Token 값을 claims로 바꿔주는 메서드
+    public Claims parsingToken(String token) { //Token 값을 claims로 바꿔주는 메서드
         return Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())
                 .parseClaimsJws(token)

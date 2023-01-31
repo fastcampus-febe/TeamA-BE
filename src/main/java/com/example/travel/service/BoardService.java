@@ -15,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +56,7 @@ public class BoardService {
     @Transactional
     public Long update(final Long id, final BoardRequestDto params) {
         Board entity = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
-            entity.update(params.getTitle(), params.getContent());
+        entity.update(params.getTitle(), params.getContent());
         return id;
     }
 
@@ -127,16 +125,6 @@ public class BoardService {
     }
 
     /**
-     * 게시글 좋아요 순으로 가져오기
-     * ?order = thumb : 내림차순 desc thumb
-     */
-    public List<BoardResponseDto> findByThumbsUp(int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("thumb").descending());
-        Page<Board> result = boardRepository.findAll(pageable);
-        List<Board> boardList = result.getContent();
-        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
-    }
-
      * 게시글 검색
      */
 
@@ -161,3 +149,5 @@ public class BoardService {
         return boardResponseDtoList;
     }
 }
+
+
