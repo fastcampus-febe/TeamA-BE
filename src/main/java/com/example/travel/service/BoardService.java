@@ -74,7 +74,7 @@ public class BoardService {
      * 게시글 삭제하기
      */
     @Transactional
-    public void deleteById(final Long id){
+    public void deleteById(final Long id) {
         boardRepository.deleteById(id);
     }
 
@@ -104,7 +104,7 @@ public class BoardService {
      * 게시글 최신 순으로 가져오기
      * ?order = -createdDate : 내림차순 desc created_date
      */
-    public List<BoardResponseDto> findByCreatedDateDesc(int page){
+    public List<BoardResponseDto> findByCreatedDateDesc(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate").descending());
         Page<Board> result = boardRepository.findAll(pageable);
         List<Board> boardList = result.getContent();
@@ -116,8 +116,19 @@ public class BoardService {
      * 게시글 오래된 순으로 가져오기
      * ?order = createdDate : 오름차순 asc create_date
      */
-    public List<BoardResponseDto> findByCreatedDateAsc(int page){
+    public List<BoardResponseDto> findByCreatedDateAsc(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate").ascending());
+        Page<Board> result = boardRepository.findAll(pageable);
+        List<Board> boardList = result.getContent();
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    }
+
+    /**
+     * 게시글 좋아요 순으로 가져오기
+     * ?order = thumb : 내림차순 desc thumb
+     */
+    public List<BoardResponseDto> findByThumbsUp(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("thumb").descending());
         Page<Board> result = boardRepository.findAll(pageable);
         List<Board> boardList = result.getContent();
         return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
