@@ -6,12 +6,11 @@ import com.example.travel.dto.TokenDto;
 import com.example.travel.entity.Member;
 import com.example.travel.ext.JwtTokenProvider;
 import com.example.travel.repository.MemberRepository;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -67,5 +66,22 @@ public class MemberService {
         return passwordEncoder.encode(password);
     }
 
+    @Transactional(readOnly = true)
+    public Member findById(final String memberId){
+        return mr.findById(memberId).orElseThrow(IllegalArgumentException::new);
+    }
 
+    /**
+     * 비밀번호 변경
+     */
+    @Transactional
+    public Member updatePwd(String memberId, String currentPwd, String newPwd){
+        Member member = mr.findById(memberId).orElseThrow(IllegalArgumentException::new);
+        boolean isSuccess = passwordEncoder.matches(currentPwd, member.getPassword());
+        System.out.println(isSuccess);
+        if(isSuccess){
+            member.updatePwd(encodingPassword(newPwd));
+            return mr.save(member);}
+        return null;
+    }
 }
