@@ -1,6 +1,5 @@
 package com.example.travel.entity;
 
-
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,5 +27,9 @@ public class Member {
         this.password = password;
         this.nickname = nickname;
         this.role = role;
+    }
+
+    public void updatePwd(String password){
+        this.password = password;
     }
 }
