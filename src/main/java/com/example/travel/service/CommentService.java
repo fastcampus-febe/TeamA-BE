@@ -5,8 +5,6 @@ import com.example.travel.dto.CommentResponseDto;
 import com.example.travel.entity.Board;
 import com.example.travel.entity.Comment;
 import com.example.travel.entity.Member;
-import com.example.travel.exception.CustomException;
-import com.example.travel.exception.ErrorCode;
 import com.example.travel.repository.BoardRepository;
 import com.example.travel.repository.CommentRepository;
 import com.example.travel.repository.MemberRepository;
@@ -14,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.util.List;
 import java.util.stream.Collectors;
