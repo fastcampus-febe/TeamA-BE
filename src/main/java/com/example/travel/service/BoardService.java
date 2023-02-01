@@ -15,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +35,7 @@ public class BoardService {
     @Transactional
     public Long save(String nickname, final BoardRequestDto dto) {
         Member member = memberRepository.findByNickname(nickname);
+        dto.setWriter(member.getNickname());
         dto.setMember(member);
 
         Board board = boardRepository.save(dto.toEntity());
@@ -155,7 +154,7 @@ public class BoardService {
     }
 
     public List<BoardResponseDto> boardSearchByWriter(String writer, Pageable pageable){
-        Page<Board> result = boardRepository.findAllByWriter(writer, pageable);
+        Page<Board> result = boardRepository.findAllByWriterContaining(writer, pageable);
         List<Board> boardList = result.getContent();
         List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
         return boardResponseDtoList;
