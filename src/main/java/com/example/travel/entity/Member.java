@@ -29,4 +29,8 @@ public class Member {
         this.nickname = nickname;
         this.role = role;
     }
+
+    public void updatePwd(String password){
+        this.password = password;
+    }
 }
