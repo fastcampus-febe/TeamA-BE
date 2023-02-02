@@ -1,11 +1,19 @@
 package com.example.travel.service;
 
+import com.example.travel.dto.PlaceResponseDto;
 import com.example.travel.entity.Place;
 import com.example.travel.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -29,6 +37,17 @@ public class PlaceService {
             return true;
         }
         return false;
+    }
+
+    /**
+     *
+     * @param title 관광지명 기준으로 검색.
+     */
+
+    public List<PlaceResponseDto> findByTitleContaining(String title, Pageable pageable){
+        Page<Place> res = pr.findByTitleContaining(title, pageable);
+        List<Place> placeList = res.getContent();
+        return placeList.stream().map(PlaceResponseDto::new).collect(Collectors.toList());
     }
 
 }
