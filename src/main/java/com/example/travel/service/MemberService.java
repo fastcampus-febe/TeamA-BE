@@ -85,5 +85,4 @@ public class MemberService {
             return mr.save(member);}
         return null;
     }
-
 }
