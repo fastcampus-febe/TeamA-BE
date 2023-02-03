@@ -2,6 +2,7 @@ package com.example.travel.controller;
 
 import com.example.travel.dto.MemberLoginRequest;
 import com.example.travel.dto.MemberSignUpRequest;
+import com.example.travel.dto.PasswordDto;
 import com.example.travel.dto.TokenDto;
 import com.example.travel.entity.Member;
 import com.example.travel.service.MemberService;
@@ -39,8 +40,9 @@ public class MemberController {
     @ApiOperation(value = "패스워드 변경", notes = "패스워드를 확인후 변경합니다.")
     @PostMapping("/myPage/changePassword/{id}")
     public @ResponseBody String changePassword(@PathVariable("id") String id,
-                                               @RequestParam("currentPwd") String currentPwd,
-                                               @RequestParam("newPwd") String newPwd) {
+                                               @RequestBody PasswordDto dto) {
+        String currentPwd = dto.getCurrentPwd();
+        String newPwd = dto.getNewPwd();
         if (currentPwd.equals(newPwd)){
             return "비밀번호가 동일합니다.";
         }
