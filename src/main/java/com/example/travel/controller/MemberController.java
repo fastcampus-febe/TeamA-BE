@@ -1,15 +1,20 @@
 package com.example.travel.controller;
 
-import com.example.travel.dto.MemberLoginRequest;
-import com.example.travel.dto.MemberSignUpRequest;
-import com.example.travel.dto.PasswordDto;
-import com.example.travel.dto.TokenDto;
+import com.example.travel.dto.*;
+import com.example.travel.entity.Favor;
 import com.example.travel.entity.Member;
+import com.example.travel.entity.Review;
 import com.example.travel.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = {"회원 서비스"}, description = "회원 서비스를 담당합니다.")
 @RequiredArgsConstructor
@@ -43,15 +48,16 @@ public class MemberController {
         String currentPwd = dto.getCurrentPwd();
         String newPwd = dto.getNewPwd();
         if (currentPwd.equals(newPwd)){
-            return "비밀번호가 동일합니다.";
+            return "현재 비밀번호와 동일합니다.";
         }
         if (memberService.updatePwd(id, currentPwd, newPwd) == null){
-            return "비밀번호가 일치하지않습니다.";
+            return "현재 비밀번호가 일치하지않습니다.";
         } else {
             return "비밀번호가 변경되었습니다.";
         }
     }
 
+    @ApiOperation(value = "회원 탈퇴", notes = "회원을 탈퇴합니다")
     @DeleteMapping("/myPage/info/{id}")
     public @ResponseBody String deleteMember(@PathVariable String id){
         try {
@@ -63,6 +69,17 @@ public class MemberController {
         }
     }
 
+    @ApiOperation(value = "찜 목록 조회", notes = "회원의 찜 목록을 조회합니다.")
+    @GetMapping("/myPage/favor/{id}")
+    public List<FavorResponseDto> getFavors(@PathVariable String id, @PageableDefault(page=0, size=10, sort="id", direction= Sort.Direction.DESC) Pageable pageable){
+        return memberService.getFavors(id, pageable);
+    }
+
+    @ApiOperation(value = "리뷰 목록 조회", notes = "회원의 리뷰 목록을 조회합니다.")
+    @GetMapping("/myPage/review/{id}")
+    public List<ReviewResponseDto> getReviews(@PathVariable String id, @PageableDefault(page=0, size=10, sort="id", direction= Sort.Direction.DESC) Pageable pageable){
+        return memberService.getReviews(id, pageable);
+    }
 
 //    @GetMapping("/hello")
 //    @PreAuthorize("hasAnyRole('USER')") // USER 권한만 호출 가능
