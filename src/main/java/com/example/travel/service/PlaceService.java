@@ -16,9 +16,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -27,7 +29,6 @@ public class PlaceService {
 
     private final PlaceRepository pr;
     private final FavorRepository fr;
-
     private final MemberRepository mr;
 
     /**
@@ -35,7 +36,7 @@ public class PlaceService {
      */
     @Transactional
     public void save(Place place) {
-        Place entity = pr.save(place);
+        pr.save(place);
     }
 
     /**
@@ -113,5 +114,26 @@ public class PlaceService {
             favor = new Favor(null, member, place, status);
         }
         fr.save(favor);
+    }
+
+    /**
+     * 찜이 가장 많은 관광지 10 곳을 보여준다.
+     * 찜 테이블이 없는 경우에는 place 테이블의 id 기준 오름차순으로 관광지 10 곳 보여준다.
+     */
+    public List<PlaceResponseDto> findFavorRank() {
+        List<Place> placeList = new ArrayList<>();
+        List<PlaceResponseDto> placeResponseDtoList = new ArrayList<>();
+        List<Object[]> objects = fr.findFavorRank();
+        if (objects.size() == 0 || objects == null) {
+            List<Place> notFavorPlaceList = pr.findTop10OrderByIdAsc();
+            return notFavorPlaceList.stream().map(PlaceResponseDto::new).collect(Collectors.toList());
+        }
+        int cnt = 0;
+        for (Object[] obj : objects) {
+            placeList.add(pr.findAllById(((BigInteger) obj[0]).longValue()));
+            placeResponseDtoList.add(cnt, new PlaceResponseDto(placeList.get(cnt), ((BigInteger) obj[1]).intValue()));
+            cnt++;
+        }
+        return placeResponseDtoList;
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 
 public interface FavorRepository extends JpaRepository<Favor, Long> {
     Favor findAllByPlaceAndMember(Place place, Member member);
@@ -16,5 +18,10 @@ public interface FavorRepository extends JpaRepository<Favor, Long> {
             "and favor.place = :place")
     int sumFavorStatus(@Param("place") Place place);
     Favor findByMember(Member member);
-
+    @Query(value = "select f.place_id, count(*) as CNT " +
+            "from favor f " +
+            "where f.status = 1 " +
+            "group by f.place_id " +
+            "order by CNT desc LIMIT 10;", nativeQuery = true)
+    List<Object[]> findFavorRank();
 }
