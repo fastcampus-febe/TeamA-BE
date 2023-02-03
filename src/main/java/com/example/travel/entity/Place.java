@@ -3,6 +3,7 @@ package com.example.travel.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -62,6 +63,10 @@ public class Place {
 
     @Column(name = "overview", length = 10000)
     private String overview; // 개요
+
+    @OneToMany(mappedBy = "place", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OrderBy("id desc") // 리뷰 정렬
+    private List<Review> reviews;
 
     @Builder
     public Place(int contentId, String title, String addr1, String addr2, int areaCode, String sigunguCode, String cat1, String cat2, String cat3, String firstImage, String firstImage2, double mapX, double mapY, String tel, String homepage, String overview) {
