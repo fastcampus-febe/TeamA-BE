@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PlaceRequestDto {
 
+    private long id;    // 인덱스
     private int contentId; // 컨텐츠 ID
     private String title; // 컨텐츠명
     private String addr1; // 주소
@@ -21,6 +22,7 @@ public class PlaceRequestDto {
 
     public Place toEntity(){
         return Place.builder()
+                .id(id)
                 .contentId(contentId)
                 .title(title)
                 .addr1(addr1)
