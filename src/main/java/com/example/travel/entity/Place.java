@@ -69,7 +69,8 @@ public class Place {
     private List<Review> reviews;
 
     @Builder
-    public Place(int contentId, String title, String addr1, String addr2, int areaCode, String sigunguCode, String cat1, String cat2, String cat3, String firstImage, String firstImage2, double mapX, double mapY, String tel, String homepage, String overview) {
+    public Place(Long id, int contentId, String title, String addr1, String addr2, int areaCode, String sigunguCode, String cat1, String cat2, String cat3, String firstImage, String firstImage2, double mapX, double mapY, String tel, String homepage, String overview) {
+        this.id = id;
         this.contentId = contentId;
         this.title = title;
         this.addr1 = addr1;
