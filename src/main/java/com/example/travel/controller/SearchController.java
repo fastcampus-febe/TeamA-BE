@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = {"관광지리스트 서비스"}, description = "관광지 정보를 보여줍니다.")
+@Api(tags = {"관광지 리스트 서비스"}, description = "관광지 정보를 보여줍니다.")
 @RestController
 @RequiredArgsConstructor
 public class SearchController {
@@ -45,7 +45,7 @@ public class SearchController {
     /**
      * 찜하기 or 찜하기 취소
      */
-    @ApiOperation(value = "게시글 생성", notes = "새 게시글을 생성합니다.")
+    @ApiOperation(value = "찜 기능", notes = "유저가 관광지를 찜 하거나 찜 취소를 할 수 있습니다.")
     @PostMapping("/favor/{id}")
     public String doFavor(@PathVariable Long id, Authentication authentication){
         MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();

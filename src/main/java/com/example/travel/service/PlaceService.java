@@ -16,8 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -54,7 +55,17 @@ public class PlaceService {
     public List<PlaceResponseDto> findByTitleContaining(String title, Pageable pageable) {
         Page<Place> res = pr.findByTitleContaining(title, pageable);
         List<Place> placeList = res.getContent();
-        return placeList.stream().map(PlaceResponseDto::new).collect(Collectors.toList());
+        HashMap mapFavor = new HashMap<>();
+        List<PlaceResponseDto> placeResponseDtoList = new ArrayList<>();
+        for (int i = 0; i < placeList.size(); i++) {
+            if (fr.sumFavorStatus(placeList.get(i)) != 0) {
+                mapFavor.put(i, fr.sumFavorStatus(placeList.get(i)));
+            } else {
+                mapFavor.put(i, 0);
+            }
+            placeResponseDtoList.add(i, (new PlaceResponseDto(placeList.get(i), (Integer) mapFavor.get(i))));
+        }
+        return placeResponseDtoList;
     }
 
     /**
