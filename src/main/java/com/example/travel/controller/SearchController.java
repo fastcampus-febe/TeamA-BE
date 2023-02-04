@@ -52,4 +52,14 @@ public class SearchController {
         String strMemberId = memberLoginRequest.getId();
         return placeService.save(id, strMemberId);
     }
+
+    /**
+     * 찜이 가장 많은 관광지 10 곳을 보여준다.
+     * 찜 테이블이 없는 경우에는 place 테이블의 id 기준 오름차순으로 관광지 10 곳 보여준다.
+     */
+    @ApiOperation(value = "찜 관광지 top 10", notes = "찜하기 순이 가장 많은 관광지 10개 리스트를 보여줍니다.")
+    @GetMapping("/favor/rank")
+    public List<PlaceResponseDto> selectFavorRank(){
+        return placeService.findFavorRank();
+    }
 }

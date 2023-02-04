@@ -21,4 +21,10 @@ public interface FavorRepository extends JpaRepository<Favor, Long> {
     int sumFavorStatus(@Param("place") Place place);
     Favor findByMember(Member member);
     List<Favor> findAllByMember(Member member, Pageable pageable);
+    @Query(value = "select f.place_id, count(*) as CNT " +
+            "from favor f " +
+            "where f.status = 1 " +
+            "group by f.place_id " +
+            "order by CNT desc LIMIT 10;", nativeQuery = true)
+    List<Object[]> findFavorRank();
 }
