@@ -78,7 +78,7 @@ public class BoardController {
     /**
      * 게시글 좋아요
      */
-    @PostMapping("/board/{id}")
+    @PostMapping("/board/thumb/{id}")
     @ApiOperation(value = "게시글 좋아요", notes = "사용자가 게시글 좋아요를 누릅니다.")
     public String thumbsUp(@PathVariable Long id, Authentication authentication) {
         MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
