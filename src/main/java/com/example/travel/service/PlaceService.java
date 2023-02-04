@@ -19,11 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.travel.service.ReviewService.getPlaceResponseDtos;
 
 @RequiredArgsConstructor
 @Service
@@ -135,12 +136,6 @@ public class PlaceService {
             List<Place> notFavorPlaceList = pr.findTop10OrderByIdAsc();
             return notFavorPlaceList.stream().map(PlaceResponseDto::new).collect(Collectors.toList());
         }
-        int cnt = 0;
-        for (Object[] obj : objects) {
-            placeList.add(pr.findAllById(((BigInteger) obj[0]).longValue()));
-            placeResponseDtoList.add(cnt, new PlaceResponseDto(placeList.get(cnt), ((BigInteger) obj[1]).intValue()));
-            cnt++;
-        }
-        return placeResponseDtoList;
+        return getPlaceResponseDtos(placeList, placeResponseDtoList, objects, pr);
     }
 }

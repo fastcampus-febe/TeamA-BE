@@ -1,5 +1,7 @@
 package com.example.travel.service;
 
+import com.example.travel.dto.PlaceResponseDto;
+import com.example.travel.dto.PlaceReviewResponseDto;
 import com.example.travel.dto.ReviewRequestDto;
 import com.example.travel.dto.ReviewResponseDto;
 import com.example.travel.entity.*;
@@ -11,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,5 +70,36 @@ public class ReviewService {
     @Transactional
     public void deleteById(final Long reviewId) {
         placeRepository.deleteById(reviewId);
+    }
+
+    /**
+     * 리뷰 가장 많은 관광지 10 곳을 보여준다.
+     * 리뷰 테이블이 없는 경우에는 place 테이블의 id 기준 오름차순으로 관광지 10 곳을 보여준다.
+     */
+    public List<PlaceReviewResponseDto> findReviewRank(){
+        List<Place> placeList = new ArrayList<>();
+        List<PlaceReviewResponseDto> placeReviewResponseDtos = new ArrayList<>();
+        List<Object[]> objects = reviewRepository.findReviewRank();
+        if (objects.size() == 0) {
+            List<Place> notFavorPlaceList = placeRepository.findTop10OrderByIdAsc();
+            return notFavorPlaceList.stream().map(PlaceReviewResponseDto::new).collect(Collectors.toList());
+        }
+        int cnt = 0;
+        for (Object[] obj : objects) {
+            placeList.add(placeRepository.findAllById(((BigInteger) obj[0]).longValue()));
+            placeReviewResponseDtos.add(cnt, new PlaceReviewResponseDto(placeList.get(cnt), ((BigInteger) obj[1]).intValue()));
+            cnt++;
+        }
+        return placeReviewResponseDtos;
+    }
+
+    static List<PlaceResponseDto> getPlaceResponseDtos(List<Place> placeList, List<PlaceResponseDto> placeResponseDtoList, List<Object[]> objects, PlaceRepository placeRepository) {
+        int cnt = 0;
+        for (Object[] obj : objects) {
+            placeList.add(placeRepository.findAllById(((BigInteger) obj[0]).longValue()));
+            placeResponseDtoList.add(cnt, new PlaceResponseDto(placeList.get(cnt), ((BigInteger) obj[1]).intValue()));
+            cnt++;
+        }
+        return placeResponseDtoList;
     }
 }
