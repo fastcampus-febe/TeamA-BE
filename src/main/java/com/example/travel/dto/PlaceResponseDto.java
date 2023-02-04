@@ -3,6 +3,8 @@ package com.example.travel.dto;
 import com.example.travel.entity.Place;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class PlaceResponseDto {
 
@@ -24,6 +26,7 @@ public class PlaceResponseDto {
     private String homepage; // 홈페이지 주소
     private String overview; // 개요
     private int favor; // 찜 cnt
+    private List<WeatherShortResponseDto> weather; //날씨
 
     public PlaceResponseDto(Place place) {
         this.id = place.getId();
@@ -64,5 +67,26 @@ public class PlaceResponseDto {
         this.homepage = place.getHomepage();
         this.overview = place.getOverview();
         this.favor = sumFavorStatus;
+    }
+
+    public PlaceResponseDto(Place place, int sumFavorStatus, List<WeatherShortResponseDto> weather) {
+        this.id = place.getId();
+        this.contentId = place.getContentId();
+        this.title = place.getTitle();
+        this.addr1 = place.getAddr1();
+        this.addr2 = place.getAddr2();
+        this.areaCode = place.getAreaCode();
+        this.sigunguCode = place.getSigunguCode();
+        this.cat1 = place.getCat1();
+        this.cat2 = place.getCat2();
+        this.cat3 = place.getCat3();
+        this.firstImage = place.getFirstImage();
+        this.firstImage2 = place.getFirstImage2();
+        this.mapX = place.getMapX();
+        this.mapY = place.getMapY();
+        this.tel = place.getTel();
+        this.homepage = place.getHomepage();
+        this.overview = place.getOverview();
+        this.weather = weather;
     }
 }
