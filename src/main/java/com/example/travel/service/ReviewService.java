@@ -46,7 +46,7 @@ public class ReviewService {
         Place place = placeRepository.findById(placeId).orElseThrow(() ->
                 new IllegalArgumentException("댓글 작성 실패 : 해당 게시글 id가 존재하지 않습니다. => " + placeId));
         Sort sort = Sort.by(Sort.Direction.DESC, "id", "createdDate");
-        List<Review> list = reviewRepository.findAll(sort);
+        List<Review> list = reviewRepository.findReviewsByPlaceId(placeId, sort);
         return list.stream().map(ReviewResponseDto::new).collect(Collectors.toList());
     }
 

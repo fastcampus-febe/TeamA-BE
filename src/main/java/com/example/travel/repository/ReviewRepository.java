@@ -10,4 +10,5 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findAllByWriter(String nickname, Pageable pageable);
+    List<Review> findReviewsByPlaceId(Long id, Sort sort);
 }
