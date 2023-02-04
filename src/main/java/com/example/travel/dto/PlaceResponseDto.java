@@ -48,6 +48,27 @@ public class PlaceResponseDto {
         this.overview = place.getOverview();
     }
 
+    public PlaceResponseDto(Place place, List<WeatherShortResponseDto> weather) {
+        this.id = place.getId();
+        this.contentId = place.getContentId();
+        this.title = place.getTitle();
+        this.addr1 = place.getAddr1();
+        this.addr2 = place.getAddr2();
+        this.areaCode = place.getAreaCode();
+        this.sigunguCode = place.getSigunguCode();
+        this.cat1 = place.getCat1();
+        this.cat2 = place.getCat2();
+        this.cat3 = place.getCat3();
+        this.firstImage = place.getFirstImage();
+        this.firstImage2 = place.getFirstImage2();
+        this.mapX = place.getMapX();
+        this.mapY = place.getMapY();
+        this.tel = place.getTel();
+        this.homepage = place.getHomepage();
+        this.overview = place.getOverview();
+        this.weather = weather;
+    }
+
     public PlaceResponseDto(Place place, int sumFavorStatus) {
         this.id = place.getId();
         this.contentId = place.getContentId();

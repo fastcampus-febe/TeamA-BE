@@ -87,9 +87,8 @@ public class PlaceService {
                 return new PlaceResponseDto(res, fr.findAllByPlaceAndMember(res, member).getStatus(), shortResponse);
             }
         }
-        return new PlaceResponseDto(res);
+        return new PlaceResponseDto(res, shortResponse);
     }
-
 
     /**
      * 찜하기 or 찜하기 취소
