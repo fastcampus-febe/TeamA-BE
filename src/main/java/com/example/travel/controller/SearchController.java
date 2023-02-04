@@ -7,11 +7,13 @@ import com.example.travel.service.PlaceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags = {"관광지 리스트 서비스"}, description = "관광지 정보를 보여줍니다.")
@@ -34,7 +36,7 @@ public class SearchController {
      */
     @ApiOperation(value = "관광지 상세정보", notes = "id 기준으로 해당 관광지의 상세 내용을 보여줍니다")
     @GetMapping("/place/{id}")
-    public PlaceResponseDto detailPlaceWithId(@PathVariable Long id, Authentication authentication){
+    public PlaceResponseDto detailPlaceWithId(@PathVariable Long id, Authentication authentication) throws IOException, ParseException {
         MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
         Member member = Member.builder()
                 .id(memberLoginRequest.getId())

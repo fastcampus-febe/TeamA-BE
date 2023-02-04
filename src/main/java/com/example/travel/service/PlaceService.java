@@ -1,6 +1,7 @@
 package com.example.travel.service;
 
 import com.example.travel.dto.PlaceResponseDto;
+import com.example.travel.dto.WeatherShortResponseDto;
 import com.example.travel.entity.Favor;
 import com.example.travel.entity.Member;
 import com.example.travel.entity.Place;
@@ -11,11 +12,13 @@ import com.example.travel.repository.MemberRepository;
 import com.example.travel.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.parser.ParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ public class PlaceService {
     private final PlaceRepository pr;
     private final FavorRepository fr;
     private final MemberRepository mr;
+    private final WeatherService ws;
 
     /**
      * 관광지 저장.
@@ -73,15 +77,19 @@ public class PlaceService {
      * id 기준으로 Place 테이블의 상세 정보 보여주기.
      * favor 이 1 이면 로그인한 유저가 해당 게시물을 찜하기 누른 상태, 0이면 찜하지 않은 상태.
      */
-    public PlaceResponseDto findById(Long id, Member member) {
+    public PlaceResponseDto findById(Long id, Member member) throws IOException, ParseException {
         Place res = pr.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
+        String mapX = String.valueOf(res.getMapX());
+        String mapY = String.valueOf(res.getMapY());
+        List<WeatherShortResponseDto> shortResponse = ws.selectShortWeather(mapX, mapY);
         if (member != null) {
             if (fr.findAllByPlaceAndMember(res, member) != null) {
-                return new PlaceResponseDto(res, fr.findAllByPlaceAndMember(res, member).getStatus());
+                return new PlaceResponseDto(res, fr.findAllByPlaceAndMember(res, member).getStatus(), shortResponse);
             }
         }
         return new PlaceResponseDto(res);
     }
+
 
     /**
      * 찜하기 or 찜하기 취소
