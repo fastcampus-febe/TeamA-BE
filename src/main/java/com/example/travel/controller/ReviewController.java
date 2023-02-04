@@ -4,7 +4,6 @@ import com.example.travel.dto.*;
 import com.example.travel.service.ReviewService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +54,16 @@ public class ReviewController {
     @DeleteMapping("/place/{placeId}/review/{reviewId}")
     public void deleteReviewById(@PathVariable final Long reviewId) {
         reviewService.deleteById(reviewId);
+    }
+
+
+    /**
+     * 리뷰 가장 많은 관광지 10 곳을 보여준다.
+     * 리뷰 테이블이 없는 경우에는 place 테이블의 id 기준 오름차순으로 관광지 10 곳을 보여준다.
+     */
+    @ApiOperation(value = "리뷰 랭킹", notes = "관광지의 리뷰가 많은 순으로 10곳의 관광지 리스트를 보여줍니다.")
+    @GetMapping("/review/rank")
+    public List<PlaceReviewResponseDto> selectBoardRank(){
+        return reviewService.findReviewRank();
     }
 }
