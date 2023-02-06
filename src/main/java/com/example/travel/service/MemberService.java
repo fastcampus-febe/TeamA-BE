@@ -1,10 +1,7 @@
 package com.example.travel.service;
 
 import com.example.travel.dto.*;
-import com.example.travel.entity.Favor;
-import com.example.travel.entity.Member;
-import com.example.travel.entity.Place;
-import com.example.travel.entity.Review;
+import com.example.travel.entity.*;
 import com.example.travel.ext.JwtTokenProvider;
 import com.example.travel.repository.FavorRepository;
 import com.example.travel.repository.MemberRepository;
@@ -16,9 +13,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -51,27 +54,29 @@ public class MemberService {
     }
 
     //회원 로그인(토큰 발급해줌)
-    public TokenDto login(MemberLoginRequest req) {
-        log.info("req : " + req);
+    public MemberLoginResponse login(MemberLoginRequest req) {
+        MemberLoginResponse memberLoginResponse = null;
         Member member = req.toEntity();
         Member result = mr.findById(member.getId()).orElseThrow(IllegalArgumentException::new);
-        log.info("member : " + member);
-
-        if (result != null) {
-            passwordMustBeSame(req.getPassword(), result.getPassword());
+        try {
+            if (result == null || !passwordMustBeSame(req.getPassword(), result.getPassword())){
+                throw new IllegalArgumentException();}
             String token = jwtTokenProvider.makeJwtToken(result);
-
-            return new TokenDto(token);
-        } else {
-            return null;
+            memberLoginResponse = new MemberLoginResponse(member, token);
+            return memberLoginResponse;
+        } catch (Exception e){
+            String loginSuccess = "아이디 또는 비밀번호가 일치하지않습니다.";
+            memberLoginResponse = new MemberLoginResponse(loginSuccess);
+            return memberLoginResponse;
         }
     }
 
 
-    private void passwordMustBeSame(String requestPassword, String password) {
+    private boolean passwordMustBeSame(String requestPassword, String password) {
         if (!passwordEncoder.matches(requestPassword, password)) {
             throw new IllegalArgumentException();
         }
+        return true;
     }
 
     private String encodingPassword(String password) {
