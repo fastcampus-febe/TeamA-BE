@@ -3,8 +3,6 @@ package com.example.travel.controller;
 import com.example.travel.dto.BoardRequestDto;
 import com.example.travel.dto.BoardResponseDto;
 import com.example.travel.dto.MemberLoginRequest;
-import com.example.travel.repository.BoardRepository;
-import com.example.travel.repository.MemberRepository;
 import com.example.travel.service.BoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,8 +23,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final MemberRepository memberRepository;
-    private final BoardRepository boardRepository;
 
     /**
      * 게시글 생성
@@ -40,12 +36,12 @@ public class BoardController {
     }
 
     /**
-     * 게시글 리스트 조회
+     * 게시글 리스트 10개씩 조회
      */
     @GetMapping("/board/selectAll")
-    @ApiOperation(value = "게시글 전체 조회", notes = "전체 게시글 내용을 가져옵니다.")
-    public List<BoardResponseDto> findAll() {
-        return boardService.findAll();
+    @ApiOperation(value = "게시글 전체 조회", notes = "전체 게시글 내용을 10개씩 가져옵니다.")
+    public List<BoardResponseDto> findAll(@RequestParam(required = false, defaultValue = "1") int page) {
+        return boardService.findAll(page - 1);
     }
 
     /**
