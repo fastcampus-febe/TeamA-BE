@@ -1,18 +1,16 @@
 package com.example.travel.controller;
 
 import com.example.travel.dto.*;
-import com.example.travel.entity.Favor;
 import com.example.travel.entity.Member;
-import com.example.travel.entity.Review;
 import com.example.travel.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,9 +28,8 @@ public class MemberController {
 
     @PostMapping("/login")
     @ApiOperation(value = "로그인", notes = "로그인을 수행합니다.")
-    public TokenDto signIn(@RequestBody MemberLoginRequest req){
-        TokenDto res =  memberService.login(req);
-        return res;
+    public MemberLoginResponse signIn(@RequestBody MemberLoginRequest req){
+        return memberService.login(req);
     }
     @ApiOperation(value = "마이페이지내 회원 정보", notes = "회원의 정보를 보여줍니다.")
     @GetMapping("/myPage/info/{id}")
