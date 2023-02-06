@@ -43,12 +43,13 @@ public class BoardService {
     }
 
     /**
-     * 게시글 리스트 조회
+     * 게시글 리스트 10개씩 조회
      */
-    public List<BoardResponseDto> findAll() {
-        Sort sort = Sort.by(Sort.Direction.DESC, "id", "createdDate");
-        List<Board> list = boardRepository.findAll(sort);
-        return list.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    public List<BoardResponseDto> findAll(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+        Page<Board> result = boardRepository.findAll(pageable);
+        List<Board> boardList = result.getContent();
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
     }
 
     /**
@@ -91,13 +92,13 @@ public class BoardService {
             board.setThumb(board.getThumb() + 1);
             Thumb thumb = new Thumb(board, member); // true 처리
             thumbRepository.save(thumb);
-            return "좋아요 처리 완료";
+            return "1"; // 좋아요 처리 완료
         } else {
             // 좋아요를 누른적 있다면 취소 처리 후 테이블 삭제
             Thumb thumb = thumbRepository.findByBoardAndMember(board, member);
             thumb.thumbsDown(board);
             thumbRepository.delete(thumb);
-            return "좋아요 취소";
+            return "0"; // 좋아요 취소
         }
     }
 
