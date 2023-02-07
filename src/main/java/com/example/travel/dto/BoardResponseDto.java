@@ -1,12 +1,9 @@
 package com.example.travel.dto;
 
 import com.example.travel.entity.Board;
-import com.example.travel.entity.Member;
 import lombok.Getter;
 
-import javax.swing.plaf.metal.MetalMenuBarUI;
 import java.time.LocalDateTime;
-import java.util.function.Function;
 
 @Getter
 public class BoardResponseDto{
