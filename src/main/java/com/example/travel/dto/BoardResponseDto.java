@@ -1,16 +1,20 @@
 package com.example.travel.dto;
 
 import com.example.travel.entity.Board;
+import com.example.travel.entity.Member;
 import lombok.Getter;
 
+import javax.swing.plaf.metal.MetalMenuBarUI;
 import java.time.LocalDateTime;
+import java.util.function.Function;
 
 @Getter
-public class BoardResponseDto {
+public class BoardResponseDto{
 
     private Long id; // PK
     private String title; // 제목
     private String content; // 내용
+    private String userId; // 회원 아이디
     private String writer; // 작성자
     private int thumb; // 좋아요
     private int hit; // 조회 수
@@ -21,6 +25,18 @@ public class BoardResponseDto {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
+        this.writer = board.getWriter();
+        this.thumb = board.getThumb();
+        this.hit = board.getHit();
+        this.createdDate = board.getCreatedDate();
+        this.modifiedDate = board.getModifiedDate();
+    }
+
+    public BoardResponseDto(Board board, String userId) {
+        this.id = board.getId();
+        this.title = board.getTitle();
+        this.content = board.getContent();
+        this.userId = userId;
         this.writer = board.getWriter();
         this.thumb = board.getThumb();
         this.hit = board.getHit();
