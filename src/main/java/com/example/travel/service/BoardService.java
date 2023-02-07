@@ -53,16 +53,6 @@ public class BoardService {
     }
 
     /**
-     * 게시글 리스트 10개씩 조회
-     */
-    public List<BoardResponseDto> findAll(int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
-        Page<Board> result = boardRepository.findAll(pageable);
-        List<Board> boardList = result.getContent();
-        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
-    }
-
-    /**
      * 게시글 수정
      */
     @Transactional

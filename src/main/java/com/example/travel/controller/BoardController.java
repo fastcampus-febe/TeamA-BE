@@ -33,15 +33,6 @@ public class BoardController {
     }
 
     /**
-     * 게시글 리스트 10개씩 조회
-     */
-    @GetMapping("/board/selectAll")
-    @ApiOperation(value = "게시글 전체 조회", notes = "전체 게시글 내용을 10개씩 가져옵니다.")
-    public List<BoardResponseDto> findAll(@RequestParam(required = false, defaultValue = "1") int page) {
-        return boardService.findAll(page - 1);
-    }
-
-    /**
      * 게시글 수정
      */
     @PatchMapping("/board/{id}")
@@ -110,6 +101,10 @@ public class BoardController {
         return boardService.findByThumbsUp(page - 1);
     }
 
+    /**
+     * 닉네임 또는 제목으로 게시글 검색 후 sorting
+     * 검색이 없을 시 모든 게시글 가져오기
+     */
     @ApiOperation(value = "게시글 검색", notes = "닉네임 또는 제목으로 게시물을 검색합니다.")
     @GetMapping("/board/list")
     public List<BoardResponseDto> boardList(

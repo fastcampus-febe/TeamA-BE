@@ -13,7 +13,6 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "board")
-//@ToString
 public class Board {
 
     @Id
@@ -21,15 +20,12 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(name = "title", nullable = false, length = 1000)
     @Column(name = "title", length = 1000)
     private String title;
 
-//    @Column(name = "content", nullable = false, length = 1000)
     @Column(name = "content", length = 1000)
     private String content;
 
-//    @Column(name = "writer", nullable = false, unique = true)
     @Column(name = "writer")
     private String writer;
 
@@ -39,20 +35,17 @@ public class Board {
     @Column(name = "hit")
     private int hit; // 조회수
 
-//    @Column(name = "createdDate", nullable = false)
     @Column(name = "createdDate")
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(name = "modifiedDate")
     private LocalDateTime modifiedDate;
 
-//    @ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
-    // 1월 28일(토) 추가함. 추후 수정 할 수도 있음.
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @OrderBy("id desc") // 댓글 정렬
     private List<Comment> comments;
