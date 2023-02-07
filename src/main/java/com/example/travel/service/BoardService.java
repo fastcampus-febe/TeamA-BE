@@ -141,21 +141,24 @@ public class BoardService {
      * 게시글 검색
      */
 
-    public List<BoardResponseDto> boardSearchByKey(String searchKeyword, Pageable pageable) {
+    public List<BoardResponseDto> boardSearchByKey(String searchKeyword, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAllByTitleContaining(searchKeyword, pageable);
         List<Board> boardList = result.getContent();
         List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
         return boardResponseDtoList;
     }
 
-    public List<BoardResponseDto> boardList(Pageable pageable) {
+    public List<BoardResponseDto> boardList(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAll(pageable);
         List<Board> boardList = result.getContent();
         List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
         return boardResponseDtoList;
     }
 
-    public List<BoardResponseDto> boardSearchByWriter(String writer, Pageable pageable){
+    public List<BoardResponseDto> boardSearchByWriter(String writer, int page){
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAllByWriterContaining(writer, pageable);
         List<Board> boardList = result.getContent();
         List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());

@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private static final String[] PUBLIC_URLS = { //이 URL은 권한 검사안함. 아래 내용은 임시임.
-            "/signup", "/login", "/"
+            "/signup", "/login", "/", "/logout"
     };
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -47,6 +47,10 @@ public class WebSecurityConfig {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
                 .and()
+                .logout() // 로그아웃 기능 작동함
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .and()
                 .addFilterBefore(
                         JwtAuthenticationFilter.of(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class).build();
@@ -57,6 +61,4 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() { //시큐리티 filter 제외, 그러나 OncePerRequestFilter는 시큐리티 필터가 아니라서 로직실행
         return (web) -> web.ignoring().antMatchers(PUBLIC_URLS);
     }
-
-
 }

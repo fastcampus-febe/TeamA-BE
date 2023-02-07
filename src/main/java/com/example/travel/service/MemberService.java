@@ -2,26 +2,24 @@ package com.example.travel.service;
 
 import com.example.travel.dto.*;
 import com.example.travel.entity.*;
+import com.example.travel.ext.JwtProperties;
 import com.example.travel.ext.JwtTokenProvider;
 import com.example.travel.repository.FavorRepository;
 import com.example.travel.repository.MemberRepository;
 import com.example.travel.repository.ReviewRepository;
+
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -34,6 +32,9 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final FavorRepository favorRepository;
     private final ReviewRepository reviewRepository;
+    private final JwtProperties jwtProperties;
+    private final StringRedisTemplate redisTemplate;
+
 
     //회원가입(비밀번호 암호화)
     public String signUp(MemberSignUpRequest req) {
@@ -54,6 +55,7 @@ public class MemberService {
     }
 
     //회원 로그인(토큰 발급해줌)
+    @Transactional
     public MemberLoginResponse login(MemberLoginRequest req) {
         MemberLoginResponse memberLoginResponse = null;
         Member member = req.toEntity();
@@ -62,7 +64,8 @@ public class MemberService {
             if (result == null || !passwordMustBeSame(req.getPassword(), result.getPassword())){
                 throw new IllegalArgumentException();}
             String token = jwtTokenProvider.makeJwtToken(result);
-            memberLoginResponse = new MemberLoginResponse(member, token);
+            memberLoginResponse = new MemberLoginResponse(result, token);
+            redisTemplate.opsForValue().set("RT:" + member.getId(), token);
             return memberLoginResponse;
         } catch (Exception e){
             String loginSuccess = "아이디 또는 비밀번호가 일치하지않습니다.";
@@ -71,6 +74,18 @@ public class MemberService {
         }
     }
 
+    @Transactional
+    public String logout(HttpServletRequest request){
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String token = authorizationHeader.substring(jwtProperties.getTokenPrefix().length());
+        Claims claims = jwtTokenProvider.parsingToken(token);
+        String id= (String) claims.get("id");
+        System.out.println(id);
+        if (redisTemplate.opsForValue().get("RT:" + id)!= null) {
+                redisTemplate.delete("RT:" + id);}
+        redisTemplate.opsForValue().set(token, "logout");
+        return "로그아웃 되었습니다.";
+    }
 
     private boolean passwordMustBeSame(String requestPassword, String password) {
         if (!passwordEncoder.matches(requestPassword, password)) {
@@ -98,8 +113,7 @@ public class MemberService {
         System.out.println(isSuccess);
         if (isSuccess) {
             member.updatePwd(encodingPassword(newPwd));
-            return mr.save(member);
-        }
+            return mr.save(member);}
         return null;
     }
 

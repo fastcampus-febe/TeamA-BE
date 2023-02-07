@@ -15,7 +15,7 @@ public class MemberLoginResponse {
     private String nickname;
     private String role;
     private String token;
-    private String loginSuccess;
+    private String loginFail;
 
     public MemberLoginResponse(Member member, String token){
         this.id = member.getId();
@@ -24,7 +24,7 @@ public class MemberLoginResponse {
         this.token = token;
     }
 
-    public MemberLoginResponse(String loginSuccess){
-        this.loginSuccess = loginSuccess;
+    public MemberLoginResponse(String loginFail){
+        this.loginFail = loginFail;
     }
 }
