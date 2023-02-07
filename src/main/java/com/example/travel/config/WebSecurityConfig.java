@@ -20,8 +20,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
 
-    private static final String[] PUBLIC_URLS = { //이 URL은 권한 검사안함. 아래 내용은 임시임.
-            "/signup", "/login", "/", "/logout"
+    private static final String[] PUBLIC_URLS = { //이 URL은 권한 검사안함.
+            "/signup",
+            "/login",
+            "/",
+            "/search/results",
+            "/place/**",
+            "/review/rank",
+            "/favor/rank"
     };
 
     private final JwtTokenProvider jwtTokenProvider;
