@@ -25,7 +25,7 @@ public class WebSecurityConfig {
             "/login",
             "/",
             "/search/results",
-            "/place/**",
+            "/place/*",
             "/review/rank",
             "/favor/rank"
     };
