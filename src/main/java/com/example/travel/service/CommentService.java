@@ -56,17 +56,23 @@ public class CommentService {
      * 댓글 수정
      */
     @Transactional
-    public Long update(final Long commentId, final CommentRequestDto params) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("댓글 작성 실패 : 해당 댓글 id가 존재하지 않습니다. => " + commentId));
+    public String update(final Long commentId, final CommentRequestDto params, String memberNickname) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("댓글 수정 실패 : 해당 댓글 id가 존재하지 않습니다. => " + commentId));
+        if (!comment.getWriter().equals(memberNickname)){
+            return "수정이 불가합니다";}
         comment.update(params.getContent());
-        return commentId;
+        return "수정을 완료하였습니다.";
     }
 
     /**
      * 댓글 삭제하기
      */
     @Transactional
-    public void deleteById(final Long commentId) {
+    public String deleteById(final Long commentId, String memberNickname) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("댓글 삭제 실패 : 해당 댓글 id가 존재하지 않습니다. => " + commentId));
+        if (!comment.getWriter().equals(memberNickname)){
+            return "삭제가 불가합니다";}
         commentRepository.deleteById(commentId);
+        return "삭제가 완료되었습니다.";
     }
 }

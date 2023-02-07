@@ -44,18 +44,21 @@ public class CommentController {
      */
     @PatchMapping("/board/{boardId}/comment/{commentId}")
     @ApiOperation(value = "댓글 수정", notes = "댓글을 수정 합니다.")
-    public Long save(@PathVariable final Long commentId, @RequestBody final CommentRequestDto params) {
-        return commentService.update(commentId, params);
+    public String update(@PathVariable final Long commentId, @RequestBody final CommentRequestDto params, Authentication authentication) {
+        MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
+        String memberNickname = memberLoginRequest.getNickname();
+        return commentService.update(commentId, params, memberNickname);
     }
-
 
     /**
      * 댓글 삭제
      */
     @ApiOperation(value = "댓글 삭제", notes = "댓글을 삭제 합니다.")
     @DeleteMapping("/board/{boardId}/comment/{commentId}")
-    public void deleteCommentById(@PathVariable final Long commentId) {
-        commentService.deleteById(commentId);
+    public String deleteCommentById(@PathVariable final Long commentId, Authentication authentication) {
+        MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
+        String memberNickname = memberLoginRequest.getNickname();
+        return commentService.deleteById(commentId, memberNickname);
     }
 }
 

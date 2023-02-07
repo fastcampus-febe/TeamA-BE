@@ -53,11 +53,10 @@ public class MemberController {
                                                @RequestBody PasswordDto dto) {
         String currentPwd = dto.getCurrentPwd();
         String newPwd = dto.getNewPwd();
+        if (memberService.updatePwd(id, currentPwd, newPwd) == null){
+            return "현재 비밀번호가 일치하지않습니다.";}
         if (currentPwd.equals(newPwd)){
             return "현재 비밀번호와 동일합니다.";
-        }
-        if (memberService.updatePwd(id, currentPwd, newPwd) == null){
-            return "현재 비밀번호가 일치하지않습니다.";
         } else {
             return "비밀번호가 변경되었습니다.";
         }

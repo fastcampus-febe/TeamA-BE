@@ -3,6 +3,7 @@ package com.example.travel.service;
 import com.example.travel.dto.BoardRequestDto;
 import com.example.travel.dto.BoardResponseDto;
 import com.example.travel.entity.Board;
+import com.example.travel.entity.Comment;
 import com.example.travel.entity.Member;
 import com.example.travel.entity.Thumb;
 import com.example.travel.exception.CustomException;
@@ -65,10 +66,12 @@ public class BoardService {
      * 게시글 수정
      */
     @Transactional
-    public Long update(final Long id, final BoardRequestDto params) {
+    public String update(final Long id, final BoardRequestDto params, String memberNickname) {
         Board entity = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
-            entity.update(params.getTitle(), params.getContent());
-        return id;
+        if (!entity.getWriter().equals(memberNickname)){
+            return "수정이 불가합니다";}
+        entity.update(params.getTitle(), params.getContent());
+        return "수정을 완료하였습니다.";
     }
 
     /**
@@ -86,8 +89,12 @@ public class BoardService {
      * 게시글 삭제하기
      */
     @Transactional
-    public void deleteById(final Long id) {
+    public String deleteById(final Long id, String memberNickname) {
+        Board entity = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
+        if (!entity.getWriter().equals(memberNickname)){
+            return "삭제가 불가합니다";}
         boardRepository.deleteById(id);
+        return "삭제를 완료하였습니다.";
     }
 
     /**

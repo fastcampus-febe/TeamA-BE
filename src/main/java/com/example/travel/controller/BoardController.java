@@ -46,8 +46,10 @@ public class BoardController {
      */
     @PatchMapping("/board/{id}")
     @ApiOperation(value = "게시글 수정", notes = "상세 게시글 내용을 수정합니다.")
-    public Long save(@PathVariable final Long id, @RequestBody final BoardRequestDto params) {
-        return boardService.update(id, params);
+    public String update(@PathVariable final Long id, @RequestBody final BoardRequestDto params, Authentication authentication) {
+        MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
+        String memberNickname = memberLoginRequest.getNickname();
+        return boardService.update(id, params, memberNickname);
     }
 
     /**
@@ -64,8 +66,10 @@ public class BoardController {
      */
     @ApiOperation(value = "게시글 삭제", notes = "게시글을 삭제합니다.")
     @DeleteMapping("/board/{id}")
-    public void deleteBoardById(@PathVariable final Long id) {
-        boardService.deleteById(id);
+    public String deleteBoardById(@PathVariable final Long id, Authentication authentication) {
+        MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
+        String memberNickname = memberLoginRequest.getNickname();
+        return boardService.deleteById(id, memberNickname);
     }
 
     /**
