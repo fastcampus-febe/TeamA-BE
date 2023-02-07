@@ -7,12 +7,8 @@ import com.example.travel.service.BoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -111,16 +107,16 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 검색", notes = "닉네임 또는 제목으로 게시물을 검색합니다.")
     @GetMapping("/board/list")
-    public List<BoardResponseDto> boardList(Model model,
-                            @PageableDefault(page=0, size=10, sort="id", direction= Sort.Direction.DESC) Pageable pageable,
+    public List<BoardResponseDto> boardList(
+                            @RequestParam(required = false, defaultValue = "1") int page,
                             @RequestParam(required = false, value="searchKeyword") String searchKeyword, @RequestParam(required = false, value="writer") String writer){
 
         if (searchKeyword ==null && writer == null){
-            return boardService.boardList(pageable);
+            return boardService.boardList(page - 1);
         } else if (searchKeyword != null && writer == null) {
-            return boardService.boardSearchByKey(searchKeyword, pageable);
+            return boardService.boardSearchByKey(searchKeyword, page - 1);
         } else {
-            return boardService.boardSearchByWriter(writer, pageable);
+            return boardService.boardSearchByWriter(writer, page - 1);
         }
     }
 }

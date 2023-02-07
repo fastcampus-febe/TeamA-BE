@@ -2,6 +2,7 @@ package com.example.travel.controller;
 
 import com.example.travel.dto.*;
 import com.example.travel.entity.Member;
+import com.example.travel.ext.JwtTokenProvider;
 import com.example.travel.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,8 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Api(tags = {"회원 서비스"}, description = "회원 서비스를 담당합니다.")
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 public class MemberController {
     private final MemberService memberService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "회원가입을 수행합니다.")
@@ -31,6 +33,13 @@ public class MemberController {
     public MemberLoginResponse signIn(@RequestBody MemberLoginRequest req){
         return memberService.login(req);
     }
+
+    @PostMapping("/logout")
+    @ApiOperation(value = "로그아웃", notes = "로그아웃을 수행합니다.")
+    public String logout(HttpServletRequest request){
+        return memberService.logout(request);
+    }
+
     @ApiOperation(value = "마이페이지내 회원 정보", notes = "회원의 정보를 보여줍니다.")
     @GetMapping("/myPage/info/{id}")
     public Member mypageInfo(@PathVariable String id){
@@ -40,7 +49,7 @@ public class MemberController {
 
     @ApiOperation(value = "패스워드 변경", notes = "패스워드를 확인후 변경합니다.")
     @PostMapping("/myPage/changePassword/{id}")
-    public @ResponseBody String changePassword(@PathVariable("id") String id,
+    public String changePassword(@PathVariable("id") String id,
                                                @RequestBody PasswordDto dto) {
         String currentPwd = dto.getCurrentPwd();
         String newPwd = dto.getNewPwd();
@@ -56,7 +65,7 @@ public class MemberController {
 
     @ApiOperation(value = "회원 탈퇴", notes = "회원을 탈퇴합니다")
     @DeleteMapping("/myPage/info/{id}")
-    public @ResponseBody String deleteMember(@PathVariable String id){
+    public String deleteMember(@PathVariable String id){
         try {
             memberService.deleteMember(id);
             return "탈퇴가 완료되었습니다.";
