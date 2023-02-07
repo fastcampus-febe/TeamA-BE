@@ -11,6 +11,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -54,8 +55,8 @@ public class BoardController {
      */
     @GetMapping("/board/{id}")
     @ApiOperation(value = "게시글 조회", notes = "상세 게시글 내용을 가져옵니다.")
-    public BoardResponseDto findByBoardId(@PathVariable final Long id) {
-        return boardService.findByBoardId(id);
+    public BoardResponseDto findByBoardId(@PathVariable final Long id, HttpServletRequest request) {
+        return boardService.findByBoardId(id, request);
     }
 
     /**
@@ -108,15 +109,16 @@ public class BoardController {
     @ApiOperation(value = "게시글 검색", notes = "닉네임 또는 제목으로 게시물을 검색합니다.")
     @GetMapping("/board/list")
     public List<BoardResponseDto> boardList(
-                            @RequestParam(required = false, defaultValue = "1") int page,
-                            @RequestParam(required = false, value="searchKeyword") String searchKeyword, @RequestParam(required = false, value="writer") String writer){
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, value="searchKeyword") String searchKeyword, @RequestParam(required = false, value="writer") String writer,
+            HttpServletRequest request){
 
         if (searchKeyword ==null && writer == null){
-            return boardService.boardList(page - 1);
+            return boardService.boardList(page - 1, request);
         } else if (searchKeyword != null && writer == null) {
-            return boardService.boardSearchByKey(searchKeyword, page - 1);
+            return boardService.boardSearchByKey(searchKeyword, page - 1, request);
         } else {
-            return boardService.boardSearchByWriter(writer, page - 1);
+            return boardService.boardSearchByWriter(writer, page - 1, request);
         }
     }
 }
