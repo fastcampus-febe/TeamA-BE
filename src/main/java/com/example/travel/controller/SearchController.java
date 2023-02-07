@@ -37,11 +37,15 @@ public class SearchController {
     @ApiOperation(value = "관광지 상세정보", notes = "id 기준으로 해당 관광지의 상세 내용을 보여줍니다")
     @GetMapping("/place/{id}")
     public PlaceResponseDto detailPlaceWithId(@PathVariable Long id, Authentication authentication) throws IOException, ParseException {
-        MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
-        Member member = Member.builder()
-                .id(memberLoginRequest.getId())
-                .build();
-        return placeService.findById(id, member);
+        if(authentication == null) {
+            return placeService.findById(id, null);
+        } else {
+            MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
+            Member member = Member.builder()
+                    .id(memberLoginRequest.getId())
+                    .build();
+            return placeService.findById(id, member);
+        }
     }
 
     /**
