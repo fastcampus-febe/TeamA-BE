@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
@@ -23,6 +22,7 @@ public class WebSecurityConfig {
     private static final String[] PUBLIC_URLS = { //이 URL은 권한 검사안함.
             "/signup",
             "/login",
+            "/logout",
             "/",
             "/search/results",
             "/place/*",
@@ -52,6 +52,7 @@ public class WebSecurityConfig {
                 .formLogin().loginPage("/login").permitAll()//로그인 기본 url 설정
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
+
                 .and()
                 .logout() // 로그아웃 기능 작동함
                 .logoutUrl("/logout")
