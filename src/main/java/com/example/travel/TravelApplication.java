@@ -16,14 +16,12 @@ public class TravelApplication {
 
     @Bean
     public ServletWebServerFactory serverFactory() {
-        TomcatServletWebServerFactory tomcatServletWebServerFactory
-                = new TomcatServletWebServerFactory();
+        TomcatServletWebServerFactory tomcatServletWebServerFactory = new TomcatServletWebServerFactory();
         tomcatServletWebServerFactory.addAdditionalTomcatConnectors(createStandardConnector());
-
         return tomcatServletWebServerFactory;
     }
 
-    private Connector createStandardConnector() { // http : 80
+    private Connector createStandardConnector() { // HTTP : 80
         Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
         connector.setPort(80);
         return connector;
