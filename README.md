@@ -1,4 +1,4 @@
-# 전국 관광지 검색 서비스
+# 🌈 전국 관광지 검색 서비스
 * 전국 관광지 명을 검색하면 한국관광공사 API를 통해 가져온 해당 관광지의 정보와 기상청 API를 통해 가져온 3일치의 날씨를 보여주어 전국 여행을 계획할 수 있게 도와드리는 서비스입니다.
 
 ### Back-End
@@ -9,6 +9,7 @@
 ### Front-End
 * React.js, Recoil, Axios, Styled Components
 * Netlify : https://travel-ateam.netlify.app/
+* Repository : https://github.com/fastcampus-febe/TeamA-FE
 
 ### Open API
 * 기상청_단기예보 ((구)_동네예보) 조회서비스 
