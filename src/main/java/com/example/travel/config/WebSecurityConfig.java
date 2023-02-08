@@ -28,7 +28,6 @@ public class WebSecurityConfig {
             "/place/*",
             "/review/rank",
             "/favor/rank",
-            "/logout",
             "/board/list"
     };
 
