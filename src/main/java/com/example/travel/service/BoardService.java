@@ -148,45 +148,64 @@ public class BoardService {
      * 게시글 검색
      */
     public List<BoardResponseDto> boardSearchByKey(String searchKeyword, int page, HttpServletRequest request) {
-        String userId = getIdFromToken(request);
+        if(getIdFromToken(request) != null){
+            String userId = getIdFromToken(request);
+            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+            Page<Board> result = boardRepository.findAllByTitleContaining(searchKeyword, pageable);
+            return BoardResponseDtoList(result, userId);}
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAllByTitleContaining(searchKeyword, pageable);
-        return BoardResponseDtoList(result, userId);
+        List<Board> boardList = result.getContent();
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
     }
 
     /**
      * 게시글 목록 조회
      */
     public List<BoardResponseDto> boardList(int page, HttpServletRequest request) {
-        String userId = getIdFromToken(request);
+        if(getIdFromToken(request) != null){
+            String userId = getIdFromToken(request);
+            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+            Page<Board> result = boardRepository.findAll(pageable);
+            return BoardResponseDtoList(result, userId);}
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAll(pageable);
-        return BoardResponseDtoList(result, userId);
+        List<Board> boardList = result.getContent();
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
     }
 
     /**
      * 게시글 작성자 검색
      */
     public List<BoardResponseDto> boardSearchByWriter(String writer, int page, HttpServletRequest request){
-        String userId = getIdFromToken(request);
+        if(getIdFromToken(request) != null){
+            String userId = getIdFromToken(request);
+            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+            Page<Board> result = boardRepository.findAllByWriterContaining(writer, pageable);
+            return BoardResponseDtoList(result, userId);}
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAllByWriterContaining(writer, pageable);
-        return BoardResponseDtoList(result, userId);
+        List<Board> boardList = result.getContent();
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
     }
 
     /**
-     * 토큰에서 유저 아이디 추출
+     * 토큰있으면 유저 아이디 추출
      */
     public String getIdFromToken(HttpServletRequest request){
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        String token = authorizationHeader.substring(jwtProperties.getTokenPrefix().length());
-        Claims claims = jwtTokenProvider.parsingToken(token);
-        String id= (String) claims.get("id");
-        return id;
+        try {
+            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+            String token = authorizationHeader.substring(jwtProperties.getTokenPrefix().length());
+            Claims claims = jwtTokenProvider.parsingToken(token);
+            String id = (String) claims.get("id");
+            return id;
+        } catch (Exception e){
+            return null;
+        }
     }
 
     /**
-     * List<Board> -> List<BoardResponseDto>로 변경
+     * 아이디 있으면 List<Board> -> List<BoardResponseDto>로 변경
      */
     public List<BoardResponseDto> BoardResponseDtoList(Page<Board> boardPage, String id){
         List<Board> boardList = boardPage.getContent();

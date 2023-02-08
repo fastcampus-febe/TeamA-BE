@@ -27,7 +27,9 @@ public class WebSecurityConfig {
             "/search/results",
             "/place/*",
             "/review/rank",
-            "/favor/rank"
+            "/favor/rank",
+            "/logout",
+            "/board/list"
     };
 
     private final JwtTokenProvider jwtTokenProvider;
