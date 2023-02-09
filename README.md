@@ -17,6 +17,8 @@
 * JDK 11, Spring Boot 2.7.8, Gradle, IntelliJ 2022.3
 * MySQL, JPA, Lombok, AOP, JUnit, Spring Security, JWT, Redis, HTTPS SSL, CORS
 * AWS EC2, AWS RDS, Git/Github, GitKraken, Postman
+* AWS 배포 링크
+ * https://54.180.213.159/
 
 ### Front-End
 * React.js, Recoil, Axios, Styled Components
