@@ -42,6 +42,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         return http
+                .authorizeRequests().antMatchers("/**/**")
+                .access("hasIpAddress('54.180.213.159')")
+                .and()
                 .authorizeRequests()// 다음 리퀘스트에 대한 사용권한 체크
                 .antMatchers(PUBLIC_URLS).permitAll() // 가입 및 인증 주소는 누구나 접근가능
                 .and()
