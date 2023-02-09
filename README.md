@@ -17,6 +17,8 @@
 * JDK 11, Spring Boot 2.7.8, Gradle, IntelliJ 2022.3
 * MySQL, JPA, Lombok, AOP, JUnit, Spring Security, JWT, Redis, HTTPS SSL, CORS
 * AWS EC2, AWS RDS, Git/Github, GitKraken, Postman
+* AWS 배포 링크
+  * https://54.180.213.159/
 
 ### Front-End
 * React.js, Recoil, Axios, Styled Components
@@ -27,12 +29,12 @@
 
 ### Open API
 * 기상청_단기예보 ((구)_동네예보) 조회서비스 
-https://www.data.go.kr/data/15084084/openapi.do
+  * https://www.data.go.kr/data/15084084/openapi.do
 * 한국관광공사_국문 관광정보 서비스_GW
-https://www.data.go.kr/data/15101578/openapi.do
+  * https://www.data.go.kr/data/15101578/openapi.do
 
 ### WBS (Google Spread Sheet)
-* https://docs.google.com/spreadsheets/d/13Uhy4D88h1SoyTVAYitUmI0FKBMYtotlbUUkHzAbPBk/edit?usp=sharing
+* https://docs.google.com/spreadsheets/d/13Uhy4D88h1SoyTVAYitUmI0FKBMYtotlbUUkHzAbPBk/edit#gid=1503897991
 
 ### Postman API Documentation
 * https://documenter.getpostman.com/view/24159832/2s935hRSo5#7d0eba59-6283-42dd-8fa0-06e71af4caf7
