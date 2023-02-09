@@ -34,7 +34,7 @@ https://www.data.go.kr/data/15084084/openapi.do
 https://www.data.go.kr/data/15101578/openapi.do
 
 ### WBS (Google Spread Sheet)
-* https://docs.google.com/spreadsheets/d/13Uhy4D88h1SoyTVAYitUmI0FKBMYtotlbUUkHzAbPBk/edit?usp=sharing
+* https://docs.google.com/spreadsheets/d/13Uhy4D88h1SoyTVAYitUmI0FKBMYtotlbUUkHzAbPBk/edit#gid=1503897991
 
 ### Postman API Documentation
 * https://documenter.getpostman.com/view/24159832/2s935hRSo5#7d0eba59-6283-42dd-8fa0-06e71af4caf7
