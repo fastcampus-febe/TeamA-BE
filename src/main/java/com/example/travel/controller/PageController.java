@@ -1,5 +1,6 @@
 package com.example.travel.controller;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,5 +24,10 @@ public class PageController {
     @GetMapping("/board")
     public String board() {
         return "board";
+    }
+
+    @GetMapping("/board/insert")
+    public String boardInsert() {
+        return "insert board page";
     }
 }

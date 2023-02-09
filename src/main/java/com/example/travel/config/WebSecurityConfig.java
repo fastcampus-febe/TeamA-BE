@@ -14,14 +14,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
 
-    private static final String[] PUBLIC_URLS = { //이 URL은 권한 검사안함. 아래 내용은 임시임.
-            "/signup", "/login", "/"
+    private static final String[] PUBLIC_URLS = { //이 URL은 권한 검사안함.
+            "/signup",
+            "/login",
+            "/logout",
+            "/",
+            "/search/results",
+            "/place/*",
+            "/review/rank",
+            "/favor/rank",
+            "/board/list"
     };
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -35,6 +42,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         return http
+                .authorizeRequests().antMatchers("/**/**")
+                .access("hasIpAddress('54.180.213.159')")
+                .and()
                 .authorizeRequests()// 다음 리퀘스트에 대한 사용권한 체크
                 .antMatchers(PUBLIC_URLS).permitAll() // 가입 및 인증 주소는 누구나 접근가능
                 .and()
@@ -46,6 +56,11 @@ public class WebSecurityConfig {
                 .formLogin().loginPage("/login").permitAll()//로그인 기본 url 설정
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
+
+                .and()
+                .logout() // 로그아웃 기능 작동함
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
                 .and()
                 .addFilterBefore(
                         JwtAuthenticationFilter.of(jwtTokenProvider),
@@ -57,6 +72,4 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() { //시큐리티 filter 제외, 그러나 OncePerRequestFilter는 시큐리티 필터가 아니라서 로직실행
         return (web) -> web.ignoring().antMatchers(PUBLIC_URLS);
     }
-
-
 }

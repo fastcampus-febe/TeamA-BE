@@ -15,13 +15,16 @@ public class MemberLoginResponse {
     private String nickname;
     private String role;
     private String token;
+    private String loginFail;
 
-
-    public MemberLoginResponse(Member member){
+    public MemberLoginResponse(Member member, String token){
         this.id = member.getId();
         this.nickname = member.getNickname();
         this.role = member.getRole();
+        this.token = token;
     }
 
-
+    public MemberLoginResponse(String loginFail){
+        this.loginFail = loginFail;
+    }
 }

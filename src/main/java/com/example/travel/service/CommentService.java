@@ -5,8 +5,6 @@ import com.example.travel.dto.CommentResponseDto;
 import com.example.travel.entity.Board;
 import com.example.travel.entity.Comment;
 import com.example.travel.entity.Member;
-import com.example.travel.exception.CustomException;
-import com.example.travel.exception.ErrorCode;
 import com.example.travel.repository.BoardRepository;
 import com.example.travel.repository.CommentRepository;
 import com.example.travel.repository.MemberRepository;
@@ -14,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +48,7 @@ public class CommentService {
         Board board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("댓글 작성 실패 : 해당 게시글 id가 존재하지 않습니다. => " + boardId));
         Sort sort = Sort.by(Sort.Direction.DESC, "id", "createdDate");
-        List<Comment> list = commentRepository.findAll(sort);
+        List<Comment> list = commentRepository.findCommentsByBoardId(boardId, sort);
         return list.stream().map(CommentResponseDto::new).collect(Collectors.toList());
     }
 
@@ -59,17 +56,23 @@ public class CommentService {
      * 댓글 수정
      */
     @Transactional
-    public Long update(final Long commentId, final CommentRequestDto params) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("댓글 작성 실패 : 해당 댓글 id가 존재하지 않습니다. => " + commentId));
+    public String update(final Long commentId, final CommentRequestDto params, String memberNickname) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("댓글 수정 실패 : 해당 댓글 id가 존재하지 않습니다. => " + commentId));
+        if (!comment.getWriter().equals(memberNickname)){
+            return "수정이 불가합니다";}
         comment.update(params.getContent());
-        return commentId;
+        return "수정을 완료하였습니다.";
     }
 
     /**
      * 댓글 삭제하기
      */
     @Transactional
-    public void deleteById(final Long commentId) {
-        boardRepository.deleteById(commentId);
+    public String deleteById(final Long commentId, String memberNickname) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("댓글 삭제 실패 : 해당 댓글 id가 존재하지 않습니다. => " + commentId));
+        if (!comment.getWriter().equals(memberNickname)){
+            return "삭제가 불가합니다";}
+        commentRepository.deleteById(commentId);
+        return "삭제가 완료되었습니다.";
     }
 }

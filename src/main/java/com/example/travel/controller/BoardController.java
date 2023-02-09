@@ -3,23 +3,15 @@ package com.example.travel.controller;
 import com.example.travel.dto.BoardRequestDto;
 import com.example.travel.dto.BoardResponseDto;
 import com.example.travel.dto.MemberLoginRequest;
-import com.example.travel.entity.Board;
-import com.example.travel.entity.Member;
-import com.example.travel.repository.BoardRepository;
-import com.example.travel.repository.MemberRepository;
 import com.example.travel.service.BoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -28,8 +20,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final MemberRepository memberRepository;
-    private final BoardRepository boardRepository;
 
     /**
      * 게시글 생성
@@ -43,21 +33,14 @@ public class BoardController {
     }
 
     /**
-     * 게시글 리스트 조회
-     */
-    @GetMapping("/board/selectAll")
-    @ApiOperation(value = "게시글 전체 조회", notes = "전체 게시글 내용을 가져옵니다.")
-    public List<BoardResponseDto> findAll() {
-        return boardService.findAll();
-    }
-
-    /**
      * 게시글 수정
      */
     @PatchMapping("/board/{id}")
     @ApiOperation(value = "게시글 수정", notes = "상세 게시글 내용을 수정합니다.")
-    public Long save(@PathVariable final Long id, @RequestBody final BoardRequestDto params) {
-        return boardService.update(id, params);
+    public String update(@PathVariable final Long id, @RequestBody final BoardRequestDto params, Authentication authentication) {
+        MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
+        String memberNickname = memberLoginRequest.getNickname();
+        return boardService.update(id, params, memberNickname);
     }
 
     /**
@@ -65,8 +48,8 @@ public class BoardController {
      */
     @GetMapping("/board/{id}")
     @ApiOperation(value = "게시글 조회", notes = "상세 게시글 내용을 가져옵니다.")
-    public BoardResponseDto findByBoardId(@PathVariable final Long id) {
-        return boardService.findByBoardId(id);
+    public BoardResponseDto findByBoardId(@PathVariable final Long id, HttpServletRequest request) {
+        return boardService.findByBoardId(id, request);
     }
 
     /**
@@ -74,14 +57,16 @@ public class BoardController {
      */
     @ApiOperation(value = "게시글 삭제", notes = "게시글을 삭제합니다.")
     @DeleteMapping("/board/{id}")
-    public void deleteBoardById(@PathVariable final Long id) {
-        boardService.deleteById(id);
+    public String deleteBoardById(@PathVariable final Long id, Authentication authentication) {
+        MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
+        String memberNickname = memberLoginRequest.getNickname();
+        return boardService.deleteById(id, memberNickname);
     }
 
     /**
      * 게시글 좋아요
      */
-    @PostMapping("/board/{id}")
+    @PostMapping("/board/thumb/{id}")
     @ApiOperation(value = "게시글 좋아요", notes = "사용자가 게시글 좋아요를 누릅니다.")
     public String thumbsUp(@PathVariable Long id, Authentication authentication) {
         MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
@@ -116,18 +101,23 @@ public class BoardController {
         return boardService.findByThumbsUp(page - 1);
     }
 
+    /**
+     * 닉네임 또는 제목으로 게시글 검색 후 sorting
+     * 검색이 없을 시 모든 게시글 가져오기
+     */
     @ApiOperation(value = "게시글 검색", notes = "닉네임 또는 제목으로 게시물을 검색합니다.")
     @GetMapping("/board/list")
-    public List<BoardResponseDto> boardList(Model model,
-                            @PageableDefault(page=0, size=10, sort="id", direction= Sort.Direction.DESC) Pageable pageable,
-                            @RequestParam(required = false, value="searchKeyword") String searchKeyword, @RequestParam(required = false, value="writer") String writer){
+    public List<BoardResponseDto> boardList(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, value="searchKeyword") String searchKeyword, @RequestParam(required = false, value="writer") String writer,
+            HttpServletRequest request){
 
         if (searchKeyword ==null && writer == null){
-            return boardService.boardList(pageable);
+            return boardService.boardList(page - 1, request);
         } else if (searchKeyword != null && writer == null) {
-            return boardService.boardSearchByKey(searchKeyword, pageable);
+            return boardService.boardSearchByKey(searchKeyword, page - 1, request);
         } else {
-            return boardService.boardSearchByWriter(writer, pageable);
+            return boardService.boardSearchByWriter(writer, page - 1, request);
         }
     }
 }

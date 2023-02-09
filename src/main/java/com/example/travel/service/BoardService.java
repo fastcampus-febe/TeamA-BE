@@ -3,23 +3,28 @@ package com.example.travel.service;
 import com.example.travel.dto.BoardRequestDto;
 import com.example.travel.dto.BoardResponseDto;
 import com.example.travel.entity.Board;
+import com.example.travel.entity.Comment;
 import com.example.travel.entity.Member;
 import com.example.travel.entity.Thumb;
 import com.example.travel.exception.CustomException;
 import com.example.travel.exception.ErrorCode;
+import com.example.travel.ext.JwtProperties;
+import com.example.travel.ext.JwtTokenProvider;
 import com.example.travel.repository.BoardRepository;
 import com.example.travel.repository.MemberRepository;
 import com.example.travel.repository.ThumbRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +35,9 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final ThumbRepository thumbRepository;
     private final MemberRepository memberRepository;
+    private final JwtProperties jwtProperties;
+    private final JwtTokenProvider jwtTokenProvider;
+
 
     /**
      * 게시글 생성
@@ -37,6 +45,7 @@ public class BoardService {
     @Transactional
     public Long save(String nickname, final BoardRequestDto dto) {
         Member member = memberRepository.findByNickname(nickname);
+        dto.setWriter(member.getNickname());
         dto.setMember(member);
 
         Board board = boardRepository.save(dto.toEntity());
@@ -44,40 +53,38 @@ public class BoardService {
     }
 
     /**
-     * 게시글 리스트 조회
-     */
-    public List<BoardResponseDto> findAll() {
-        Sort sort = Sort.by(Sort.Direction.DESC, "id", "createdDate");
-        List<Board> list = boardRepository.findAll(sort);
-        return list.stream().map(BoardResponseDto::new).collect(Collectors.toList());
-    }
-
-    /**
      * 게시글 수정
      */
     @Transactional
-    public Long update(final Long id, final BoardRequestDto params) {
+    public String update(final Long id, final BoardRequestDto params, String memberNickname) {
         Board entity = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
-            entity.update(params.getTitle(), params.getContent());
-        return id;
+        if (!entity.getWriter().equals(memberNickname)){
+            return "수정이 불가합니다";}
+        entity.update(params.getTitle(), params.getContent());
+        return "수정을 완료하였습니다.";
     }
 
     /**
      * 상세게시글 내용 가져오기
      */
     @Transactional
-    public BoardResponseDto findByBoardId(final Long id) {
+    public BoardResponseDto findByBoardId(final Long id, HttpServletRequest request) {
         Board entity = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
         entity.increaseHit(); // 조회수 증가
-        return new BoardResponseDto(entity);
+        String userId  = getIdFromToken(request);
+        return new BoardResponseDto(entity, userId);
     }
 
     /**
      * 게시글 삭제하기
      */
     @Transactional
-    public void deleteById(final Long id) {
+    public String deleteById(final Long id, String memberNickname) {
+        Board entity = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
+        if (!entity.getWriter().equals(memberNickname)){
+            return "삭제가 불가합니다";}
         boardRepository.deleteById(id);
+        return "삭제를 완료하였습니다.";
     }
 
     /**
@@ -92,13 +99,13 @@ public class BoardService {
             board.setThumb(board.getThumb() + 1);
             Thumb thumb = new Thumb(board, member); // true 처리
             thumbRepository.save(thumb);
-            return "좋아요 처리 완료";
+            return "1"; // 좋아요 처리 완료
         } else {
             // 좋아요를 누른적 있다면 취소 처리 후 테이블 삭제
             Thumb thumb = thumbRepository.findByBoardAndMember(board, member);
             thumb.thumbsDown(board);
             thumbRepository.delete(thumb);
-            return "좋아요 취소";
+            return "0"; // 좋아요 취소
         }
     }
 
@@ -140,25 +147,73 @@ public class BoardService {
     /**
      * 게시글 검색
      */
-
-    public List<BoardResponseDto> boardSearchByKey(String searchKeyword, Pageable pageable) {
+    public List<BoardResponseDto> boardSearchByKey(String searchKeyword, int page, HttpServletRequest request) {
+        if(getIdFromToken(request) != null){
+            String userId = getIdFromToken(request);
+            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+            Page<Board> result = boardRepository.findAllByTitleContaining(searchKeyword, pageable);
+            return BoardResponseDtoList(result, userId);}
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAllByTitleContaining(searchKeyword, pageable);
         List<Board> boardList = result.getContent();
-        List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
-        return boardResponseDtoList;
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
     }
 
-    public List<BoardResponseDto> boardList(Pageable pageable) {
+    /**
+     * 게시글 목록 조회
+     */
+    public List<BoardResponseDto> boardList(int page, HttpServletRequest request) {
+        if(getIdFromToken(request) != null){
+            String userId = getIdFromToken(request);
+            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+            Page<Board> result = boardRepository.findAll(pageable);
+            return BoardResponseDtoList(result, userId);}
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAll(pageable);
         List<Board> boardList = result.getContent();
-        List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
-        return boardResponseDtoList;
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
     }
 
-    public List<BoardResponseDto> boardSearchByWriter(String writer, Pageable pageable){
-        Page<Board> result = boardRepository.findAllByWriter(writer, pageable);
+    /**
+     * 게시글 작성자 검색
+     */
+    public List<BoardResponseDto> boardSearchByWriter(String writer, int page, HttpServletRequest request){
+        if(getIdFromToken(request) != null){
+            String userId = getIdFromToken(request);
+            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+            Page<Board> result = boardRepository.findAllByWriterContaining(writer, pageable);
+            return BoardResponseDtoList(result, userId);}
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+        Page<Board> result = boardRepository.findAllByWriterContaining(writer, pageable);
         List<Board> boardList = result.getContent();
-        List<BoardResponseDto> boardResponseDtoList= boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    }
+
+    /**
+     * 토큰있으면 유저 아이디 추출
+     */
+    public String getIdFromToken(HttpServletRequest request){
+        try {
+            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+            String token = authorizationHeader.substring(jwtProperties.getTokenPrefix().length());
+            Claims claims = jwtTokenProvider.parsingToken(token);
+            String id = (String) claims.get("id");
+            return id;
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    /**
+     * 아이디 있으면 List<Board> -> List<BoardResponseDto>로 변경
+     */
+    public List<BoardResponseDto> BoardResponseDtoList(Page<Board> boardPage, String id){
+        List<Board> boardList = boardPage.getContent();
+        List<BoardResponseDto> boardResponseDtoList = new ArrayList<>();
+        for (Board board : boardList){
+            BoardResponseDto boardResponseDto = new BoardResponseDto(board, id);
+            boardResponseDtoList.add(boardResponseDto);
+        }
         return boardResponseDtoList;
     }
 }

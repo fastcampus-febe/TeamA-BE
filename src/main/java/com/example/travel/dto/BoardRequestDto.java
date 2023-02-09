@@ -4,8 +4,6 @@ import com.example.travel.entity.Board;
 import com.example.travel.entity.Member;
 import lombok.*;
 
-//@Getter
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
