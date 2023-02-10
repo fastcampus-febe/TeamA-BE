@@ -44,12 +44,12 @@ public class CommentService {
     /**
      * 댓글 리스트 조회
      */
-    public List<CommentResponseDto> findAll(Long boardId) {
+    public List<CommentResponseDto> findAll(Long boardId, String memberId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("댓글 작성 실패 : 해당 게시글 id가 존재하지 않습니다. => " + boardId));
         Sort sort = Sort.by(Sort.Direction.DESC, "id", "createdDate");
         List<Comment> list = commentRepository.findCommentsByBoardId(boardId, sort);
-        return list.stream().map(CommentResponseDto::new).collect(Collectors.toList());
+        return list.stream().map(n-> new CommentResponseDto(n, memberId)).collect(Collectors.toList());
     }
 
     /**
