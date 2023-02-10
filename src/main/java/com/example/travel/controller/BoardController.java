@@ -120,4 +120,13 @@ public class BoardController {
             return boardService.boardSearchByWriter(writer, page - 1, request);
         }
     }
+
+    /**
+     * 게시글 리스트 조회
+     */
+    @GetMapping("/board/selectAll")
+    @ApiOperation(value = "게시글 전체 조회", notes = "전체 게시글 내용을 가져옵니다.")
+    public List<BoardResponseDto> findAll() {
+        return boardService.findAll();
+    }
 }

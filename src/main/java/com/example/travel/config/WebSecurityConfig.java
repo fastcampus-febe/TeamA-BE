@@ -28,7 +28,8 @@ public class WebSecurityConfig {
             "/place/*",
             "/review/rank",
             "/favor/rank",
-            "/board/list"
+            "/board/list",
+            "/board/selectAll"
     };
 
     private final JwtTokenProvider jwtTokenProvider;

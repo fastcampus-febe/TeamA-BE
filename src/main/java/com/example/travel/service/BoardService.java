@@ -216,4 +216,13 @@ public class BoardService {
         }
         return boardResponseDtoList;
     }
+
+    /**
+     * 게시글 리스트 조회
+     */
+    public List<BoardResponseDto> findAll() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id", "createdDate");
+        List<Board> list = boardRepository.findAll(sort);
+        return list.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+    }
 }
