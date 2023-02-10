@@ -11,6 +11,7 @@ public class CommentResponseDto {
     private Long id; // PK
     private String content; // 댓글 내용
     private String writer; // 작성자
+    private String userId;
     private Long board_id; // 게시글 id
     private LocalDateTime createdDate; // 생성일
     private LocalDateTime modifiedDate; // 수정일
@@ -19,6 +20,16 @@ public class CommentResponseDto {
         this.id = comment.getId();
         this.content = comment.getContent();
         this.writer = comment.getMember().getNickname();
+        this.createdDate = comment.getCreatedDate();
+        this.modifiedDate = comment.getModifiedDate();
+        this.board_id = comment.getBoard().getId();
+    }
+
+    public CommentResponseDto(Comment comment, String userId) {
+        this.id = comment.getId();
+        this.content = comment.getContent();
+        this.writer = comment.getMember().getNickname();
+        this.userId = userId;
         this.createdDate = comment.getCreatedDate();
         this.modifiedDate = comment.getModifiedDate();
         this.board_id = comment.getBoard().getId();
