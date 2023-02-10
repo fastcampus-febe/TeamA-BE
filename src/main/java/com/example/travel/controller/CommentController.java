@@ -35,8 +35,15 @@ public class CommentController {
      */
     @GetMapping("/board/{boardId}/comment")
     @ApiOperation(value = "댓글 목록 조회", notes = "댓글을 조회 합니다.")
-    public List<CommentResponseDto> findAll(@PathVariable Long boardId) {
-        return commentService.findAll(boardId);
+    public List<CommentResponseDto> findAll(@PathVariable Long boardId, Authentication authentication) {
+        String strMemberId = null;
+        try {
+            MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
+            strMemberId = memberLoginRequest.getId();
+        } catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+        return commentService.findAll(boardId, strMemberId);
     }
 
     /**
