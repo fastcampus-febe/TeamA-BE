@@ -24,7 +24,7 @@ public class CommentController {
      */
     @ApiOperation(value = "댓글 작성", notes = "댓글을 작성 합니다.")
     @PostMapping("/board/{boardId}/comment")
-    public Long save(@PathVariable Long boardId, @RequestBody final CommentRequestDto dto, Authentication authentication) {
+    public String save(@PathVariable Long boardId, @RequestBody final CommentRequestDto dto, Authentication authentication) {
         MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
         String strMemberId = memberLoginRequest.getId();
         return commentService.save(boardId, dto, strMemberId);

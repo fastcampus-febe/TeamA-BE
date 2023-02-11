@@ -13,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Field;
 import java.util.List;
 
 @Api(tags = {"회원 서비스"}, description = "회원 서비스를 담당합니다.")
@@ -25,6 +26,8 @@ public class MemberController {
     @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "회원가입을 수행합니다.")
     public String signUp(@RequestBody MemberSignUpRequest req){
+        if (req.getId() ==null || req.getPassword() == null || req.getNickname()==null){
+            return "모든 값을 입력해주세요";}
         return memberService.signUp(req);
     }
 
@@ -51,11 +54,13 @@ public class MemberController {
     @PostMapping("/myPage/changePassword/{id}")
     public String changePassword(@PathVariable("id") String id,
                                                @RequestBody PasswordDto dto) {
-        String currentPwd = dto.getCurrentPwd();
-        String newPwd = dto.getNewPwd();
-        if (memberService.updatePwd(id, currentPwd, newPwd) == null){
+        if (dto.getCurrentPwd()==null){
+            return "현재 비밀번호를 입력해주세요";}
+        if (dto.getNewPwd()==null){
+            return "새로운 비밀번호를 입력해주세요";}
+        if (memberService.updatePwd(id, dto.getCurrentPwd(), dto.getNewPwd()) == null){
             return "현재 비밀번호가 일치하지않습니다.";}
-        if (currentPwd.equals(newPwd)){
+        if (dto.getCurrentPwd().equals(dto.getNewPwd())){
             return "현재 비밀번호와 동일합니다.";
         } else {
             return "비밀번호가 변경되었습니다.";
