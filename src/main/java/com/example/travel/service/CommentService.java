@@ -28,17 +28,20 @@ public class CommentService {
      * 댓글 생성
      */
     @Transactional
-    public Long save(Long boardId, final CommentRequestDto dto, String memberId) {
+    public String save(Long boardId, final CommentRequestDto dto, String memberId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("댓글 작성 실패 : 해당 게시글 id가 존재하지 않습니다. => " + boardId));
         Member member = memberRepository.findById(memberId).orElseThrow(() ->
                 new IllegalArgumentException("댓글 작성 실패 : 해당 Member id가 존재하지 않습니다. => " + memberId));
+        if (dto.getContent()==null ||dto.getContent()==""){
+            return "내용을 입력해주세요";
+        }
         dto.setWriter(member.getNickname());
         dto.setBoard(board);
         dto.setMember(member);
 
         Comment comment = commentRepository.save(dto.toEntity());
-        return comment.getId();
+        return String.valueOf(comment.getId());
     }
 
     /**
@@ -58,10 +61,12 @@ public class CommentService {
     @Transactional
     public String update(final Long commentId, final CommentRequestDto params, String memberNickname) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("댓글 수정 실패 : 해당 댓글 id가 존재하지 않습니다. => " + commentId));
-        if (!comment.getWriter().equals(memberNickname)){
+        if (params.getContent()==null||params.getContent()==""){
+            return "내용을 입력해주세요";
+        } if (!comment.getWriter().equals(memberNickname)){
             return "수정이 불가합니다";}
         comment.update(params.getContent());
-        return "수정을 완료하였습니다.";
+        return "수정되었습니다.";
     }
 
     /**

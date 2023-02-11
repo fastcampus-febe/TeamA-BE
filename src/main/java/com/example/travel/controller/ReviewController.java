@@ -22,7 +22,7 @@ public class ReviewController {
      */
     @ApiOperation(value = "리뷰 작성", notes = "리뷰를 작성 합니다.")
     @PostMapping("/place/{placeId}/review")
-    public Long save(@PathVariable Long placeId, @RequestBody final ReviewRequestDto dto, Authentication authentication) {
+    public String save(@PathVariable Long placeId, @RequestBody final ReviewRequestDto dto, Authentication authentication) {
         MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
         String strMemberId = memberLoginRequest.getId();
         return reviewService.save(placeId, dto, strMemberId);
@@ -42,10 +42,9 @@ public class ReviewController {
      */
     @PatchMapping("/place/{placeId}/review/{reviewId}")
     @ApiOperation(value = "리뷰 수정", notes = "리뷰를 수정 합니다.")
-    public Long save(@PathVariable final Long reviewId, @RequestBody final ReviewRequestDto dto) {
+    public String save(@PathVariable final Long reviewId, @RequestBody final ReviewRequestDto dto) {
         return reviewService.update(reviewId, dto);
     }
-
 
     /**
      * 리뷰 삭제
@@ -55,7 +54,6 @@ public class ReviewController {
     public void deleteReviewById(@PathVariable final Long reviewId) {
         reviewService.deleteById(reviewId);
     }
-
 
     /**
      * 리뷰 가장 많은 관광지 10 곳을 보여준다.

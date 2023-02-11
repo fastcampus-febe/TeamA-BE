@@ -30,17 +30,20 @@ public class ReviewService {
      * 리뷰 생성
      */
     @Transactional
-    public Long save(Long placeId, final ReviewRequestDto dto, String memberId) {
+    public String save(Long placeId, final ReviewRequestDto dto, String memberId) {
         Place place = placeRepository.findById(placeId).orElseThrow(() ->
                 new IllegalArgumentException("댓글 작성 실패 : 해당 게시글 id가 존재하지 않습니다. => " + placeId));
         Member member = memberRepository.findById(memberId).orElseThrow(() ->
                 new IllegalArgumentException("댓글 작성 실패 : 해당 Member id가 존재하지 않습니다. => " + memberId));
+        if (dto.getContent()==null || dto.getContent()==""){
+            return "내용을 입력해주세요";
+        }
         dto.setWriter(member.getNickname());
         dto.setPlace(place);
         dto.setMember(member);
 
         Review review = reviewRepository.save(dto.toEntity());
-        return review.getId();
+        return String.valueOf(review.getId());
     }
 
     /**
@@ -58,10 +61,13 @@ public class ReviewService {
      * 리뷰 수정
      */
     @Transactional
-    public Long update(final Long reviewId, final ReviewRequestDto params) {
+    public String update(final Long reviewId, final ReviewRequestDto params) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new IllegalArgumentException("리뷰 작성 실패 : 해당 리뷰 id가 존재하지 않습니다. => " + reviewId));
+        if (params.getContent()==null || params.getContent()==""){
+            return "내용을 입력해주세요";
+        }
         review.update(params.getContent());
-        return reviewId;
+        return String.valueOf(reviewId);
     }
 
     /**

@@ -26,7 +26,7 @@ public class BoardController {
      */
     @PostMapping("/board/insert")
     @ApiOperation(value = "게시글 생성", notes = "새 게시글을 생성합니다.")
-    public Long save(@RequestBody final BoardRequestDto params, Authentication authentication) {
+    public String save(@RequestBody final BoardRequestDto params, Authentication authentication) {
         MemberLoginRequest memberLoginRequest = (MemberLoginRequest) authentication.getPrincipal();
         String strMemberNickname = memberLoginRequest.getNickname();
         return boardService.save(strMemberNickname, params);
@@ -126,7 +126,7 @@ public class BoardController {
      */
     @GetMapping("/board/selectAll")
     @ApiOperation(value = "게시글 전체 조회", notes = "전체 게시글 내용을 가져옵니다.")
-    public List<BoardResponseDto> findAll() {
-        return boardService.findAll();
+    public List<BoardResponseDto> findAll(HttpServletRequest request) {
+        return boardService.findAll(request);
     }
 }

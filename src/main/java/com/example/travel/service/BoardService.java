@@ -43,13 +43,17 @@ public class BoardService {
      * 게시글 생성
      */
     @Transactional
-    public Long save(String nickname, final BoardRequestDto dto) {
+    public String save(String nickname, final BoardRequestDto dto) {
+        if(dto.getTitle()==null){
+            return "제목을 입력해주세요";
+        } if (dto.getContent()==null){
+            return "내용을 입력해주세요";
+        }
         Member member = memberRepository.findByNickname(nickname);
         dto.setWriter(member.getNickname());
         dto.setMember(member);
-
         Board board = boardRepository.save(dto.toEntity());
-        return board.getId();
+        return String.valueOf(board.getId());
     }
 
     /**
@@ -57,11 +61,16 @@ public class BoardService {
      */
     @Transactional
     public String update(final Long id, final BoardRequestDto params, String memberNickname) {
+        if(params.getTitle()==null){
+            return "제목을 입력해주세요";
+        } if (params.getContent()==null){
+            return "내용을 입력해주세요";
+        }
         Board entity = boardRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POSTS_NOT_FOUND));
         if (!entity.getWriter().equals(memberNickname)){
             return "수정이 불가합니다";}
         entity.update(params.getTitle(), params.getContent());
-        return "수정을 완료하였습니다.";
+        return "수정이 완료되었습니다";
     }
 
     /**
@@ -148,45 +157,33 @@ public class BoardService {
      * 게시글 검색
      */
     public List<BoardResponseDto> boardSearchByKey(String searchKeyword, int page, HttpServletRequest request) {
-        if(getIdFromToken(request) != null){
-            String userId = getIdFromToken(request);
-            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
-            Page<Board> result = boardRepository.findAllByTitleContaining(searchKeyword, pageable);
-            return BoardResponseDtoList(result, userId);}
+        String userId = getIdFromToken(request);
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAllByTitleContaining(searchKeyword, pageable);
         List<Board> boardList = result.getContent();
-        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardList.stream().map(n-> new BoardResponseDto(n, userId)).collect(Collectors.toList());
     }
 
     /**
      * 게시글 목록 조회
      */
     public List<BoardResponseDto> boardList(int page, HttpServletRequest request) {
-        if(getIdFromToken(request) != null){
-            String userId = getIdFromToken(request);
-            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
-            Page<Board> result = boardRepository.findAll(pageable);
-            return BoardResponseDtoList(result, userId);}
+        String userId = getIdFromToken(request);
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAll(pageable);
         List<Board> boardList = result.getContent();
-        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardList.stream().map(n-> new BoardResponseDto(n, userId)).collect(Collectors.toList());
     }
 
     /**
      * 게시글 작성자 검색
      */
     public List<BoardResponseDto> boardSearchByWriter(String writer, int page, HttpServletRequest request){
-        if(getIdFromToken(request) != null){
-            String userId = getIdFromToken(request);
-            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
-            Page<Board> result = boardRepository.findAllByWriterContaining(writer, pageable);
-            return BoardResponseDtoList(result, userId);}
+        String userId = getIdFromToken(request);
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         Page<Board> result = boardRepository.findAllByWriterContaining(writer, pageable);
         List<Board> boardList = result.getContent();
-        return boardList.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return boardList.stream().map(n-> new BoardResponseDto(n, userId)).collect(Collectors.toList());
     }
 
     /**
@@ -204,25 +201,14 @@ public class BoardService {
         }
     }
 
-    /**
-     * 아이디 있으면 List<Board> -> List<BoardResponseDto>로 변경
-     */
-    public List<BoardResponseDto> BoardResponseDtoList(Page<Board> boardPage, String id){
-        List<Board> boardList = boardPage.getContent();
-        List<BoardResponseDto> boardResponseDtoList = new ArrayList<>();
-        for (Board board : boardList){
-            BoardResponseDto boardResponseDto = new BoardResponseDto(board, id);
-            boardResponseDtoList.add(boardResponseDto);
-        }
-        return boardResponseDtoList;
-    }
 
     /**
      * 게시글 리스트 조회
      */
-    public List<BoardResponseDto> findAll() {
+    public List<BoardResponseDto> findAll(HttpServletRequest request) {
+        String userId = getIdFromToken(request);
         Sort sort = Sort.by(Sort.Direction.DESC, "id", "createdDate");
         List<Board> list = boardRepository.findAll(sort);
-        return list.stream().map(BoardResponseDto::new).collect(Collectors.toList());
+        return list.stream().map(n-> new BoardResponseDto(n, userId)).collect(Collectors.toList());
     }
 }
